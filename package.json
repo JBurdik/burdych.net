@@ -9,13 +9,16 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@base-ui/react": "^1.0.0",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "^0.7.0",
+    "@tanstack/react-form": "^1.27.5",
     "@tanstack/react-router": "^1.132.0",
     "@tanstack/react-router-devtools": "^1.132.0",
     "@tanstack/react-router-ssr-query": "^1.131.7",
     "@tanstack/react-start": "^1.132.0",
     "@tanstack/router-plugin": "^1.132.0",
+    "@tanstack/zod-form-adapter": "^0.42.1",
     "framer-motion": "^12.23.26",
     "lenis": "^1.3.16",
     "lucide-react": "^0.544.0",
@@ -24,7 +27,8 @@
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
     "tailwindcss": "^4.0.6",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@tanstack/devtools-vite": "^0.3.11",
