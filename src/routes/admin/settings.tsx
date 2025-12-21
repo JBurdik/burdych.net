@@ -1,4 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { authMiddleware } from "../../lib/auth-middleware";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -28,6 +29,9 @@ import {
 
 export const Route = createFileRoute("/admin/settings")({
   component: SettingsPage,
+  server: {
+    middleware: [authMiddleware],
+  },
   loader: async () => {
     const about = await getAbout();
     return { about };

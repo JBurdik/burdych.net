@@ -1,4 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { authMiddleware } from "../../lib/auth-middleware";
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, Briefcase } from "lucide-react";
 import { useState } from "react";
@@ -18,6 +19,9 @@ import {
 
 export const Route = createFileRoute("/admin/experiences")({
   component: AdminExperiences,
+  server: {
+    middleware: [authMiddleware],
+  },
   loader: async () => {
     const experiences = await getExperiences();
     return { experiences };

@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -9,9 +9,11 @@ import {
   ArrowLeft,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import { useState } from "react";
 import { GradientText } from "../ui/AnimatedText";
+import { signOut } from "../../lib/auth-client";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -68,7 +70,13 @@ function NavItem({
 
 export function AdminSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate({ to: "/login" });
+  };
 
   const isActive = (href: string) => {
     if (href === "/admin") {
@@ -128,8 +136,8 @@ export function AdminSidebar() {
           ))}
         </nav>
 
-        {/* Back to site */}
-        <div className="p-4 border-t border-white/10">
+        {/* Footer actions */}
+        <div className="p-4 border-t border-white/10 space-y-1">
           <Link
             to="/"
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group"
@@ -137,6 +145,13 @@ export function AdminSidebar() {
             <ArrowLeft className="w-5 h-5 group-hover:text-cyan-400 group-hover:-translate-x-1 transition-all" />
             <span className="font-medium">Zpět na web</span>
           </Link>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all group"
+          >
+            <LogOut className="w-5 h-5 group-hover:translate-x-1 transition-all" />
+            <span className="font-medium">Odhlásit se</span>
+          </button>
         </div>
       </aside>
     </>

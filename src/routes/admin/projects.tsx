@@ -1,4 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { authMiddleware } from "../../lib/auth-middleware";
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, Star, ExternalLink, Github } from "lucide-react";
 import { useState } from "react";
@@ -18,6 +19,9 @@ import {
 
 export const Route = createFileRoute("/admin/projects")({
   component: AdminProjects,
+  server: {
+    middleware: [authMiddleware],
+  },
   loader: async () => {
     const projects = await getProjects();
     return { projects };

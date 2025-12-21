@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { authMiddleware } from "../../lib/auth-middleware";
 import { motion } from "framer-motion";
 import {
   Folder,
@@ -19,6 +20,9 @@ import { getTechnologies } from "../../server/technologies";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
+  server: {
+    middleware: [authMiddleware],
+  },
   loader: async () => {
     const [projects, experiences, technologies] = await Promise.all([
       getProjects(),
