@@ -1,5 +1,9 @@
 import { useFieldContext } from "../../../lib/form-context";
 
+// TODO: Switch to Base UI Slider component once the issue with onValueChange
+// resetting the value is resolved. Currently using native range input as a workaround.
+// See: @base-ui/react/slider
+
 interface SliderFieldProps {
   label: string;
   min?: number;
@@ -21,6 +25,12 @@ export function SliderField({
   const value = field.state.value ?? min;
   const percentage = ((value - min) / (max - min)) * 100;
 
+  // Get error messages as strings
+  const errors = field.state.meta.errors;
+  const errorMessages = errors
+    .map((err) => (typeof err === "string" ? err : err?.message || ""))
+    .filter(Boolean);
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -35,8 +45,7 @@ export function SliderField({
         )}
       </div>
 
-      {/* Custom slider using native range input with custom styling */}
-      <div className="relative">
+      <div className="relative h-5 flex items-center">
         <input
           type="range"
           min={min}
@@ -44,11 +53,40 @@ export function SliderField({
           step={step}
           value={value}
           onChange={(e) => field.handleChange(Number(e.target.value))}
-          onBlur={field.handleBlur}
-          className="slider-input w-full h-2 rounded-full appearance-none cursor-pointer bg-white/10"
-          style={{
-            background: `linear-gradient(to right, rgb(6, 182, 212) 0%, rgb(20, 184, 166) ${percentage}%, rgba(255, 255, 255, 0.1) ${percentage}%)`,
-          }}
+          className="absolute inset-0 w-full h-2 appearance-none bg-transparent cursor-pointer z-10
+                     [&::-webkit-slider-thumb]:appearance-none
+                     [&::-webkit-slider-thumb]:w-5
+                     [&::-webkit-slider-thumb]:h-5
+                     [&::-webkit-slider-thumb]:rounded-full
+                     [&::-webkit-slider-thumb]:bg-white
+                     [&::-webkit-slider-thumb]:shadow-lg
+                     [&::-webkit-slider-thumb]:shadow-cyan-500/30
+                     [&::-webkit-slider-thumb]:cursor-grab
+                     [&::-webkit-slider-thumb]:active:cursor-grabbing
+                     [&::-webkit-slider-thumb]:hover:shadow-cyan-500/50
+                     [&::-webkit-slider-thumb]:transition-shadow
+                     [&::-moz-range-thumb]:w-5
+                     [&::-moz-range-thumb]:h-5
+                     [&::-moz-range-thumb]:rounded-full
+                     [&::-moz-range-thumb]:bg-white
+                     [&::-moz-range-thumb]:border-0
+                     [&::-moz-range-thumb]:shadow-lg
+                     [&::-moz-range-thumb]:shadow-cyan-500/30
+                     [&::-moz-range-thumb]:cursor-grab
+                     [&::-moz-range-thumb]:active:cursor-grabbing
+                     [&::-webkit-slider-runnable-track]:h-2
+                     [&::-webkit-slider-runnable-track]:rounded-full
+                     [&::-webkit-slider-runnable-track]:bg-transparent
+                     [&::-moz-range-track]:h-2
+                     [&::-moz-range-track]:rounded-full
+                     [&::-moz-range-track]:bg-transparent"
+        />
+        {/* Track background */}
+        <div className="absolute h-2 w-full rounded-full bg-white/10" />
+        {/* Track fill */}
+        <div
+          className="absolute h-2 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 pointer-events-none"
+          style={{ width: `${percentage}%` }}
         />
       </div>
 
@@ -64,55 +102,9 @@ export function SliderField({
         </span>
       </div>
 
-      {field.state.meta.errors.length > 0 && (
-        <p className="text-red-400 text-sm">
-          {field.state.meta.errors.join(", ")}
-        </p>
+      {errorMessages.length > 0 && (
+        <p className="text-red-400 text-sm">{errorMessages.join(", ")}</p>
       )}
-
-      <style>{`
-        .slider-input::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          background: white;
-          cursor: grab;
-          box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-          transition: box-shadow 0.2s;
-        }
-
-        .slider-input::-webkit-slider-thumb:hover {
-          box-shadow: 0 0 15px rgba(6, 182, 212, 0.7);
-        }
-
-        .slider-input::-webkit-slider-thumb:active {
-          cursor: grabbing;
-        }
-
-        .slider-input::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          background: white;
-          cursor: grab;
-          border: none;
-          box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-        }
-
-        .slider-input::-moz-range-thumb:hover {
-          box-shadow: 0 0 15px rgba(6, 182, 212, 0.7);
-        }
-
-        .slider-input:focus {
-          outline: none;
-        }
-
-        .slider-input:focus::-webkit-slider-thumb {
-          box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3), 0 0 10px rgba(6, 182, 212, 0.5);
-        }
-      `}</style>
     </div>
   );
 }

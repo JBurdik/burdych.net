@@ -256,6 +256,7 @@ function AdminTechnologies() {
         size="md"
       >
         <TechnologyForm
+          key={selectedTech?.id ?? "new"}
           defaultValues={
             selectedTech
               ? {

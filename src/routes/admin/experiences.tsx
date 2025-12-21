@@ -206,6 +206,7 @@ function AdminExperiences() {
         size="lg"
       >
         <ExperienceForm
+          key={selectedExperience?.id ?? "new"}
           defaultValues={
             selectedExperience
               ? {

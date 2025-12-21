@@ -233,6 +233,7 @@ function AdminProjects() {
         size="lg"
       >
         <ProjectForm
+          key={selectedProject?.id ?? "new"}
           defaultValues={
             selectedProject
               ? {
