@@ -1,0 +1,223 @@
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useEffect, useState } from "react";
+import { AnimatedText, GradientText } from "./ui/AnimatedText";
+import { MagneticButton, MagneticOutlineButton } from "./ui/MagneticButton";
+import { about } from "../data/portfolio";
+import { ChevronDown } from "lucide-react";
+
+// Floating orbs background
+function FloatingOrbs() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Large cyan orb */}
+      <motion.div
+        className="absolute w-[500px] h-[500px] rounded-full bg-cyan-500/20 blur-[100px]"
+        animate={{
+          x: [0, 100, 0],
+          y: [0, -50, 0],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        style={{ top: "10%", left: "10%" }}
+      />
+
+      {/* Medium purple orb */}
+      <motion.div
+        className="absolute w-[400px] h-[400px] rounded-full bg-purple-500/20 blur-[80px]"
+        animate={{
+          x: [0, -80, 0],
+          y: [0, 80, 0],
+        }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        style={{ top: "30%", right: "15%" }}
+      />
+
+      {/* Small pink orb */}
+      <motion.div
+        className="absolute w-[300px] h-[300px] rounded-full bg-pink-500/15 blur-[60px]"
+        animate={{
+          x: [0, 50, 0],
+          y: [0, 100, 0],
+        }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        style={{ bottom: "20%", left: "30%" }}
+      />
+    </div>
+  );
+}
+
+// Animated particles
+function Particles() {
+  const [particles] = useState(() =>
+    Array.from({ length: 50 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 3 + 1,
+      duration: Math.random() * 20 + 10,
+      delay: Math.random() * 5,
+    }))
+  );
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute rounded-full bg-white/20"
+          style={{
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            width: particle.size,
+            height: particle.size,
+          }}
+          animate={{
+            y: [0, -30, 0],
+            opacity: [0.2, 0.5, 0.2],
+          }}
+          transition={{
+            duration: particle.duration,
+            repeat: Infinity,
+            delay: particle.delay,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Cursor glow effect
+function CursorGlow() {
+  const cursorX = useMotionValue(0);
+  const cursorY = useMotionValue(0);
+
+  const springConfig = { damping: 25, stiffness: 150 };
+  const cursorXSpring = useSpring(cursorX, springConfig);
+  const cursorYSpring = useSpring(cursorY, springConfig);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [cursorX, cursorY]);
+
+  return (
+    <motion.div
+      className="fixed w-[400px] h-[400px] rounded-full pointer-events-none z-0"
+      style={{
+        background:
+          "radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%)",
+        x: useTransform(cursorXSpring, (x) => x - 200),
+        y: useTransform(cursorYSpring, (y) => y - 200),
+      }}
+    />
+  );
+}
+
+export function Hero() {
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-[#0a0a0f]" />
+      <FloatingOrbs />
+      <Particles />
+      <CursorGlow />
+
+      {/* Grid pattern overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.02]"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                           linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+          backgroundSize: "100px 100px",
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+        {/* Greeting */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-cyan-400 font-mono text-lg mb-6"
+        >
+          Hi, my name is
+        </motion.p>
+
+        {/* Name */}
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-4">
+          <AnimatedText text={about.name} delay={0.3} />
+        </h1>
+
+        {/* Title with gradient */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8"
+        >
+          <GradientText>{about.title}</GradientText>
+        </motion.h2>
+
+        {/* Bio snippet */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1 }}
+          className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
+        >
+          I craft exceptional digital experiences with clean code and creative solutions.
+          Let's build something amazing together.
+        </motion.p>
+
+        {/* CTA Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+        >
+          <MagneticButton href="#projects">
+            View My Work
+          </MagneticButton>
+          <MagneticOutlineButton href="#about">
+            Get In Touch
+          </MagneticOutlineButton>
+        </motion.div>
+      </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-gray-500"
+        >
+          <ChevronDown className="w-8 h-8" />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
