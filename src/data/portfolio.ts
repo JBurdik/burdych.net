@@ -42,163 +42,172 @@ export interface About {
   avatar: string;
   location: string;
   email: string;
+  phone: string;
+  cvUrl: string;
   socials: Social[];
 }
 
-// Dummy Data - Replace with DB fetches later
+// Real Data from CV
 
 export const experiences: Experience[] = [
   {
     id: "1",
-    company: "TechCorp Innovation",
-    role: "Senior Full-Stack Developer",
-    period: "2022 - Present",
+    company: "Freelance (OSVČ)",
+    role: "Frontend Developer",
+    period: "2023 - současnost",
     description:
-      "Leading development of cloud-native applications, architecting microservices, and mentoring junior developers. Reduced deployment time by 60% through CI/CD pipeline optimization.",
-    technologies: ["React", "Node.js", "TypeScript", "AWS", "PostgreSQL"],
+      "Vývoj moderních webových aplikací včetně ERP systémů, e-shopů a portfoliových webů pro modelingové agentury. Práce s nejnovějšími technologiemi a dodávání kvalitních řešení pro klienty.",
+    technologies: ["React", "Next.js", "Vue.js", "Nuxt.js", "TypeScript"],
   },
   {
     id: "2",
-    company: "StartupXYZ",
-    role: "Full-Stack Developer",
-    period: "2020 - 2022",
+    company: "Bludička, Litomyšl",
+    role: "Kuchař",
+    period: "2020 - 2023",
     description:
-      "Built and scaled a real-time collaboration platform from 0 to 50K users. Implemented WebSocket architecture and optimized database queries for 10x performance improvement.",
-    technologies: ["Vue.js", "Python", "Django", "Redis", "Docker"],
+      "Práce kuchaře při současném rozvíjení programátorských dovedností. Tato zkušenost mě naučila preciznosti, time managementu a schopnosti pracovat pod tlakem.",
+    technologies: [],
   },
   {
     id: "3",
-    company: "Digital Agency Pro",
-    role: "Frontend Developer",
-    period: "2018 - 2020",
+    company: "Pivovar Kujebák, Vysoké Mýto",
+    role: "Kuchař",
+    period: "2019 - 2020",
     description:
-      "Developed responsive web applications for Fortune 500 clients. Created reusable component libraries that reduced development time by 40%.",
-    technologies: ["React", "SCSS", "JavaScript", "Webpack", "Figma"],
+      "Získání kulinářských zkušeností v místní pivovarské restauraci, kombinace kreativity s technickým provedením v rychlém prostředí.",
+    technologies: [],
   },
   {
     id: "4",
-    company: "Freelance",
-    role: "Web Developer",
-    period: "2016 - 2018",
+    company: "Bonte Class, Pardubice",
+    role: "Kuchař",
+    period: "2017 - 2019",
     description:
-      "Delivered 30+ projects for clients worldwide. Specialized in e-commerce solutions and custom WordPress themes.",
-    technologies: ["PHP", "WordPress", "MySQL", "jQuery", "Bootstrap"],
+      "Začátek profesionální kulinářské kariéry při současném učení se webovému vývoji.",
+    technologies: [],
+  },
+  {
+    id: "5",
+    company: "PHP Brigáda",
+    role: "PHP Developer",
+    period: "2014 - 2017",
+    description:
+      "První programátorské zkušenosti s tvorbou mikro e-shopů a dashboardů pro agenturu zastupující YouTubery. Naučil jsem se základy PHP a správu databází.",
+    technologies: ["PHP", "Nette", "MySQL"],
   },
 ];
 
 export const projects: Project[] = [
   {
     id: "1",
-    title: "CloudSync Pro",
+    title: "ERP Systém",
     description:
-      "Real-time file synchronization platform with end-to-end encryption. Handles millions of files with sub-second sync times.",
-    image: "/projects/cloudsync.jpg",
-    technologies: ["React", "Node.js", "WebSocket", "AWS S3", "PostgreSQL"],
-    liveUrl: "https://cloudsync.example.com",
-    githubUrl: "https://github.com/example/cloudsync",
+      "Vlastní systém pro plánování podnikových zdrojů postavený na moderních webových technologiích pro správu firmy a optimalizaci workflow.",
+    image: "/projects/erp.jpg",
+    technologies: ["Vue.js", "Nuxt.js", "TypeScript", "TailwindCSS"],
     featured: true,
   },
   {
     id: "2",
-    title: "AI Task Manager",
+    title: "E-shop Platforma",
     description:
-      "Smart task management app with AI-powered prioritization and natural language processing for task creation.",
-    image: "/projects/taskmanager.jpg",
-    technologies: ["Next.js", "OpenAI", "Prisma", "Tailwind", "Vercel"],
-    liveUrl: "https://aitasks.example.com",
-    githubUrl: "https://github.com/example/aitasks",
+      "Plně vybavený online obchod se správou produktů, funkcí košíku a integrací plateb.",
+    image: "/projects/eshop.jpg",
+    technologies: ["React", "Next.js", "Zustand", "TailwindCSS"],
     featured: true,
   },
   {
     id: "3",
-    title: "CryptoTracker",
+    title: "Portfolio pro Modelky",
     description:
-      "Real-time cryptocurrency portfolio tracker with price alerts, historical charts, and portfolio analytics.",
-    image: "/projects/crypto.jpg",
-    technologies: ["React", "D3.js", "WebSocket", "CoinGecko API"],
-    liveUrl: "https://crypto.example.com",
+      "Portfoliová webová platforma pro modelingové agentury s fotogaleriemi, rezervačním systémem a profily talentů.",
+    image: "/projects/portfolio.jpg",
+    technologies: ["React", "Next.js", "GraphQL", "Shadcn UI"],
     featured: true,
   },
   {
     id: "4",
-    title: "DevBlog Platform",
+    title: "Osobní Portfolio",
     description:
-      "Modern blogging platform for developers with MDX support, syntax highlighting, and SEO optimization.",
-    image: "/projects/devblog.jpg",
-    technologies: ["Astro", "MDX", "Tailwind", "Cloudflare"],
-    githubUrl: "https://github.com/example/devblog",
-    featured: false,
-  },
-  {
-    id: "5",
-    title: "E-Commerce Dashboard",
-    description:
-      "Analytics dashboard for e-commerce businesses with real-time sales tracking and inventory management.",
-    image: "/projects/ecommerce.jpg",
-    technologies: ["Vue.js", "Chart.js", "Express", "MongoDB"],
-    featured: false,
-  },
-  {
-    id: "6",
-    title: "Weather Forecast App",
-    description:
-      "Beautiful weather app with 7-day forecasts, interactive maps, and severe weather alerts.",
-    image: "/projects/weather.jpg",
-    technologies: ["React Native", "OpenWeather API", "Mapbox"],
-    liveUrl: "https://weather.example.com",
+      "Tento web! Postavený na TanStack Start, Framer Motion a TailwindCSS s plynulými animacemi a moderním designem.",
+    image: "/projects/personal.jpg",
+    technologies: ["React", "TanStack Start", "Framer Motion", "TailwindCSS"],
+    githubUrl: "https://github.com/jirkab/burdych.net",
     featured: false,
   },
 ];
 
 export const technologies: Technology[] = [
-  // Frontend
-  { name: "React", icon: "react", category: "frontend", proficiency: 95 },
+  // Frontend - Main skills
+  {
+    name: "JavaScript",
+    icon: "javascript",
+    category: "frontend",
+    proficiency: 95,
+  },
   {
     name: "TypeScript",
     icon: "typescript",
     category: "frontend",
     proficiency: 90,
   },
+  { name: "React", icon: "react", category: "frontend", proficiency: 92 },
   { name: "Next.js", icon: "nextjs", category: "frontend", proficiency: 88 },
+  { name: "Vue.js", icon: "vue", category: "frontend", proficiency: 85 },
+  { name: "Nuxt.js", icon: "nuxt", category: "frontend", proficiency: 82 },
+
+  // Styling
   {
     name: "Tailwind CSS",
     icon: "tailwind",
     category: "frontend",
-    proficiency: 92,
+    proficiency: 95,
   },
-  { name: "Vue.js", icon: "vue", category: "frontend", proficiency: 75 },
+  { name: "SCSS/SASS", icon: "sass", category: "frontend", proficiency: 88 },
+  { name: "HTML & CSS", icon: "html", category: "frontend", proficiency: 95 },
+
+  // Mobile & Other
+  {
+    name: "React Native",
+    icon: "react",
+    category: "frontend",
+    proficiency: 75,
+  },
+  { name: "Expo", icon: "expo", category: "frontend", proficiency: 72 },
 
   // Backend
-  { name: "Node.js", icon: "nodejs", category: "backend", proficiency: 88 },
-  { name: "Python", icon: "python", category: "backend", proficiency: 80 },
+  { name: "PHP", icon: "php", category: "backend", proficiency: 70 },
+  { name: "GraphQL", icon: "graphql", category: "backend", proficiency: 75 },
+
+  // State & Data
+  { name: "Zustand", icon: "zustand", category: "tools", proficiency: 85 },
   {
-    name: "PostgreSQL",
-    icon: "postgresql",
-    category: "backend",
-    proficiency: 85,
+    name: "TanStack Query",
+    icon: "tanstack",
+    category: "tools",
+    proficiency: 88,
   },
-  { name: "GraphQL", icon: "graphql", category: "backend", proficiency: 78 },
-  { name: "Redis", icon: "redis", category: "backend", proficiency: 72 },
 
   // Tools
-  { name: "Git", icon: "git", category: "tools", proficiency: 92 },
-  { name: "Docker", icon: "docker", category: "tools", proficiency: 85 },
-  { name: "AWS", icon: "aws", category: "tools", proficiency: 80 },
+  { name: "Git", icon: "git", category: "tools", proficiency: 90 },
   { name: "Figma", icon: "figma", category: "tools", proficiency: 75 },
-  { name: "Linux", icon: "linux", category: "tools", proficiency: 82 },
 ];
 
 export const about: About = {
-  name: "Jirka Burdych",
-  title: "Full-Stack Developer & UI/UX Enthusiast",
-  bio: `I'm a passionate developer with 8+ years of experience building web applications that make a difference. I love turning complex problems into simple, beautiful solutions.
+  name: "Jiří Burdych",
+  title: "Frontend Developer",
+  bio: `Vyučený kuchař s vášní pro programování, který od střední školy rozvíjí své dovednosti v oblasti webového a mobilního vývoje. Začínal jsem s PHP a frameworkem Nette, kde jsem získal první pracovní zkušenosti jako programátor.
 
-When I'm not coding, you'll find me exploring new technologies, contributing to open source, or sharing knowledge through blog posts and tech talks.
+Postupně jsem se zaměřil na moderní JavaScriptové frameworky, zejména React, a v poslední době se věnuji multiplatformnímu vývoji nativních aplikací pomocí React Native a Expo. Kombinuji kreativitu a preciznost z kuchařského řemesla s technickou zdatností v programování.
 
-I believe in writing clean, maintainable code and creating user experiences that delight. Let's build something amazing together!`,
-  avatar: "/avatar.jpg",
+Mimo práci se aktivně věnuji osobním projektům, abych si udržel přehled o nejnovějších trendech a rozšířil své dovednosti. Mám zkušenosti s React, Vue, Astro, Next.js, Nuxt.js, React Native a Expo. Pro stylování využívám Tailwind CSS, SCSS a standardní CSS. Pro správu stavů preferuji Zustand a pro data fetching TanStack Query / React Query. Rovněž se seznamuji s GraphQL a aktivně používám komponenty z Shadcn UI.
+
+Ve volném čase se věnuji hraní stolního tenisu (ping pongu), což mi pomáhá udržovat se v kondici a zároveň si vyčistit hlavu. Rád sleduji a zkouším nejnovější technologie, frameworky, zajímá mě webový vývoj a AI. Volné chvíle pak nejraději trávím s rodinou.`,
+  avatar: "/me.png",
   location: "Czech Republic",
-  email: "hello@burdych.net",
+  email: "jiri.burdych@icloud.com",
+  phone: "+420 605 589 517",
+  cvUrl: "/CV.pdf",
   socials: [
     { name: "GitHub", url: "https://github.com/jirkab", icon: "github" },
     {
@@ -206,7 +215,6 @@ I believe in writing clean, maintainable code and creating user experiences that
       url: "https://linkedin.com/in/jirkab",
       icon: "linkedin",
     },
-    { name: "Twitter", url: "https://twitter.com/jirkab", icon: "twitter" },
-    { name: "Email", url: "mailto:hello@burdych.net", icon: "mail" },
+    { name: "Email", url: "mailto:jiri.burdych@icloud.com", icon: "mail" },
   ],
 };

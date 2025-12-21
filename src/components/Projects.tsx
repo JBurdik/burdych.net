@@ -140,7 +140,7 @@ function ProjectCard({
               animate={{ opacity: 1, scale: 1 }}
               className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 text-cyan-400 border border-cyan-500/30 mb-3"
             >
-              Featured
+              Hlavní
             </motion.span>
           )}
 
@@ -199,14 +199,14 @@ export function Projects() {
         {/* Section header */}
         <FadeUp className="text-center mb-16">
           <p className="text-cyan-400 font-mono text-sm mb-4">
-            What I've Built
+            Co jsem vytvořil
           </p>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Featured <GradientText>Projects</GradientText>
+            Vybrané <GradientText>projekty</GradientText>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            A selection of projects that showcase my skills in building
-            scalable, user-friendly applications.
+            Výběr projektů, které ukazují mé dovednosti ve tvorbě škálovatelných
+            a uživatelsky přívětivých aplikací.
           </p>
         </FadeUp>
 
@@ -223,7 +223,7 @@ export function Projects() {
         {otherProjects.length > 0 && (
           <>
             <FadeUp className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-white">Other Projects</h3>
+              <h3 className="text-2xl font-bold text-white">Další projekty</h3>
             </FadeUp>
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {otherProjects.map((project, index) => (

@@ -130,18 +130,12 @@ function AnimatedAvatar() {
 
         {/* Avatar container */}
         <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-3xl bg-gradient-to-br from-cyan-500/20 via-teal-500/20 to-emerald-500/20 border border-white/10 overflow-hidden">
-          {/* Placeholder gradient - replace with actual image */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#12121a] to-[#1e1e2e]" />
-
-          {/* Initials as placeholder */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent">
-              {about.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </span>
-          </div>
+          {/* Avatar image */}
+          <img
+            src="/me.png"
+            alt={about.name}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
 
           {/* Animated overlay */}
           <motion.div
@@ -189,9 +183,11 @@ export function About() {
       <div className="relative max-w-6xl mx-auto px-6">
         {/* Section header */}
         <FadeUp className="text-center mb-16">
-          <p className="text-cyan-400 font-mono text-sm mb-4">Get To Know Me</p>
+          <p className="text-cyan-400 font-mono text-sm mb-4">
+            Něco málo o mně
+          </p>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            About <GradientText>Me</GradientText>
+            O <GradientText>mně</GradientText>
           </h2>
         </FadeUp>
 
@@ -254,19 +250,33 @@ export function About() {
               ))}
             </motion.div>
 
-            {/* CTA */}
+            {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 1 }}
+              className="flex flex-wrap gap-4"
             >
               <MagneticButton href={`mailto:${about.email}`}>
                 <span className="flex items-center gap-2">
-                  Let's Talk
+                  Kontaktujte mě
                   <Mail className="w-4 h-4" />
                 </span>
               </MagneticButton>
+
+              <motion.a
+                href={about.cvUrl}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 transition-colors font-medium"
+              >
+                <Download className="w-4 h-4" />
+                Stáhnout CV
+              </motion.a>
             </motion.div>
           </div>
         </div>

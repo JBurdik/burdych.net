@@ -9,38 +9,39 @@ import {
 import {
   SiReact,
   SiTypescript,
+  SiJavascript,
   SiNextdotjs,
   SiTailwindcss,
   SiVuedotjs,
-  SiNodedotjs,
-  SiPython,
-  SiPostgresql,
+  SiNuxtdotjs,
+  SiSass,
+  SiHtml5,
+  SiPhp,
   SiGraphql,
-  SiRedis,
   SiGit,
-  SiDocker,
-  SiAmazonwebservices,
   SiFigma,
-  SiLinux,
+  SiExpo,
 } from "react-icons/si";
+import { TbBrandReactNative } from "react-icons/tb";
 
 // Icon mapping
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   react: SiReact,
   typescript: SiTypescript,
+  javascript: SiJavascript,
   nextjs: SiNextdotjs,
   tailwind: SiTailwindcss,
   vue: SiVuedotjs,
-  nodejs: SiNodedotjs,
-  python: SiPython,
-  postgresql: SiPostgresql,
+  nuxt: SiNuxtdotjs,
+  sass: SiSass,
+  html: SiHtml5,
+  php: SiPhp,
   graphql: SiGraphql,
-  redis: SiRedis,
   git: SiGit,
-  docker: SiDocker,
-  aws: SiAmazonwebservices,
   figma: SiFigma,
-  linux: SiLinux,
+  expo: SiExpo,
+  zustand: SiReact, // Use React icon as placeholder
+  tanstack: SiReact, // Use React icon as placeholder
 };
 
 // Category colors

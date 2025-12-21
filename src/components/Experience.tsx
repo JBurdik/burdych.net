@@ -117,14 +117,13 @@ export function Experience() {
         {/* Section header */}
         <FadeUp className="text-center mb-16">
           <p className="text-cyan-400 font-mono text-sm mb-4">
-            My Professional Journey
+            Moje profesní cesta
           </p>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Work <GradientText>Experience</GradientText>
+            Pracovní <GradientText>zkušenosti</GradientText>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            A timeline of my career highlights and the impact I've made at each
-            organization.
+            Přehled mé kariéry a projektů, na kterých jsem pracoval.
           </p>
         </FadeUp>
 
