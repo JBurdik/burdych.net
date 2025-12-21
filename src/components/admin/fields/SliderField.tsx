@@ -1,4 +1,4 @@
-import { useFieldContext } from "../../../lib/form-context";
+import { useFieldContext } from "@/lib/form-context";
 
 // TODO: Switch to Base UI Slider component once the issue with onValueChange
 // resetting the value is resolved. Currently using native range input as a workaround.

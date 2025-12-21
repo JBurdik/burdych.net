@@ -1,6 +1,6 @@
-import { useFieldContext } from "../../../lib/form-context";
-import { Field } from "@base-ui/react/field";
+import { useFieldContext } from "@/lib/form-context";
 import { Checkbox } from "@base-ui/react/checkbox";
+import { Field } from "@base-ui/react/field";
 import { Check } from "lucide-react";
 
 interface CheckboxFieldProps {
@@ -18,7 +18,7 @@ export function CheckboxField({ label, description }: CheckboxFieldProps) {
           checked={field.state.value || false}
           onCheckedChange={(checked) => field.handleChange(checked as boolean)}
           onBlur={field.handleBlur}
-          className="relative w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-200 border-white/20 group-hover:border-cyan-500/50 data-[checked]:bg-gradient-to-r data-[checked]:from-cyan-500 data-[checked]:to-teal-500 data-[checked]:border-cyan-500"
+          className="relative w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-200 border-white/20 group-hover:border-cyan-500/50 data-checked:bg-linear-to-r data-checked:from-cyan-500 data-[checked]:to-teal-500 data-[checked]:border-cyan-500"
         >
           <Checkbox.Indicator className="text-white">
             <Check className="w-4 h-4" />

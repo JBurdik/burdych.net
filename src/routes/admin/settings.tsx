@@ -1,30 +1,30 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { authMiddleware } from "../../lib/auth-middleware";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  FileText,
   Edit3,
+  ExternalLink,
+  FileText,
   Github,
   Linkedin,
-  ExternalLink,
+  Mail,
+  MapPin,
+  Phone,
   Plus,
   Trash2,
+  User,
 } from "lucide-react";
+import { useState } from "react";
 import { AdminLayout } from "../../components/admin/AdminLayout";
-import type { Social } from "../../db/schema";
-import { Modal, ConfirmModal } from "../../components/admin/Modal";
+import { ConfirmModal, Modal } from "../../components/admin/Modal";
 import { AboutForm } from "../../components/admin/forms/AboutForm";
 import type { AboutFormData } from "../../data/schemas";
+import type { Social } from "../../db/schema";
+import { authMiddleware } from "../../lib/auth-middleware";
 import {
-  getAbout,
-  updateAbout,
   addSocial,
   deleteSocial,
+  getAbout,
+  updateAbout,
 } from "../../server/about";
 
 export const Route = createFileRoute("/admin/settings")({
@@ -319,7 +319,7 @@ function SettingsPage() {
         size="lg"
       >
         <AboutForm
-          defaultValues={aboutData}
+          defaultValues={aboutData || undefined}
           onSubmit={handleSaveProfile}
           onCancel={() => setIsEditingProfile(false)}
         />

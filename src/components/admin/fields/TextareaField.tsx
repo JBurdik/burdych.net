@@ -1,4 +1,4 @@
-import { useFieldContext } from "../../../lib/form-context";
+import { useFieldContext } from "@/lib/form-context";
 import { Field } from "@base-ui/react/field";
 
 interface TextareaFieldProps {
