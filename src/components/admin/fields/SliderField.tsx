@@ -1,6 +1,4 @@
 import { useFieldContext } from "../../../lib/form-context";
-import { Field } from "@base-ui/react/field";
-import { Slider } from "@base-ui/react/slider";
 
 interface SliderFieldProps {
   label: string;
@@ -20,14 +18,15 @@ export function SliderField({
   suffix = "%",
 }: SliderFieldProps) {
   const field = useFieldContext<number>();
-  const value = field.state.value || min;
+  const value = field.state.value ?? min;
+  const percentage = ((value - min) / (max - min)) * 100;
 
   return (
-    <Field.Root name={field.name} className="space-y-3">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <Field.Label className="block text-sm font-medium text-gray-300">
+        <label className="block text-sm font-medium text-gray-300">
           {label}
-        </Field.Label>
+        </label>
         {showValue && (
           <span className="text-cyan-400 font-mono text-sm">
             {value}
@@ -36,22 +35,22 @@ export function SliderField({
         )}
       </div>
 
-      <Slider.Root
-        value={[value]}
-        onValueChange={(values: number[]) => field.handleChange(values[0])}
-        onValueCommitted={(values: number[]) => field.handleChange(values[0])}
-        min={min}
-        max={max}
-        step={step}
-        className="relative flex items-center w-full h-5 touch-none"
-      >
-        <Slider.Control className="flex items-center w-full">
-          <Slider.Track className="relative h-2 w-full rounded-full bg-white/10 overflow-hidden">
-            <Slider.Indicator className="absolute h-full rounded-full bg-gradient-to-r from-cyan-500 to-teal-500" />
-            <Slider.Thumb className="block w-5 h-5 rounded-full bg-white shadow-lg shadow-cyan-500/30 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-shadow hover:shadow-cyan-500/50 cursor-grab active:cursor-grabbing" />
-          </Slider.Track>
-        </Slider.Control>
-      </Slider.Root>
+      {/* Custom slider using native range input with custom styling */}
+      <div className="relative">
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(e) => field.handleChange(Number(e.target.value))}
+          onBlur={field.handleBlur}
+          className="slider-input w-full h-2 rounded-full appearance-none cursor-pointer bg-white/10"
+          style={{
+            background: `linear-gradient(to right, rgb(6, 182, 212) 0%, rgb(20, 184, 166) ${percentage}%, rgba(255, 255, 255, 0.1) ${percentage}%)`,
+          }}
+        />
+      </div>
 
       {/* Min/Max labels */}
       <div className="flex items-center justify-between text-xs text-gray-500">
@@ -65,9 +64,55 @@ export function SliderField({
         </span>
       </div>
 
-      <Field.Error className="text-red-400 text-sm">
-        {field.state.meta.errors.join(", ")}
-      </Field.Error>
-    </Field.Root>
+      {field.state.meta.errors.length > 0 && (
+        <p className="text-red-400 text-sm">
+          {field.state.meta.errors.join(", ")}
+        </p>
+      )}
+
+      <style>{`
+        .slider-input::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: white;
+          cursor: grab;
+          box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+          transition: box-shadow 0.2s;
+        }
+
+        .slider-input::-webkit-slider-thumb:hover {
+          box-shadow: 0 0 15px rgba(6, 182, 212, 0.7);
+        }
+
+        .slider-input::-webkit-slider-thumb:active {
+          cursor: grabbing;
+        }
+
+        .slider-input::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: white;
+          cursor: grab;
+          border: none;
+          box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+
+        .slider-input::-moz-range-thumb:hover {
+          box-shadow: 0 0 15px rgba(6, 182, 212, 0.7);
+        }
+
+        .slider-input:focus {
+          outline: none;
+        }
+
+        .slider-input:focus::-webkit-slider-thumb {
+          box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3), 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+      `}</style>
+    </div>
   );
 }

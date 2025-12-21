@@ -206,7 +206,18 @@ function AdminExperiences() {
         size="lg"
       >
         <ExperienceForm
-          defaultValues={selectedExperience || undefined}
+          defaultValues={
+            selectedExperience
+              ? {
+                  company: selectedExperience.company,
+                  role: selectedExperience.role,
+                  period: selectedExperience.period,
+                  description: selectedExperience.description,
+                  technologies: selectedExperience.technologies ?? [],
+                  logo: selectedExperience.logo ?? undefined,
+                }
+              : undefined
+          }
           onSubmit={handleSubmit}
           onCancel={() => {
             setIsModalOpen(false);

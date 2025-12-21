@@ -256,7 +256,16 @@ function AdminTechnologies() {
         size="md"
       >
         <TechnologyForm
-          defaultValues={selectedTech || undefined}
+          defaultValues={
+            selectedTech
+              ? {
+                  name: selectedTech.name,
+                  icon: selectedTech.icon,
+                  category: selectedTech.category,
+                  proficiency: selectedTech.proficiency,
+                }
+              : undefined
+          }
           onSubmit={handleSubmit}
           onCancel={() => {
             setIsModalOpen(false);

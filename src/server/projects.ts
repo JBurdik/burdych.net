@@ -8,10 +8,10 @@ import { z } from "zod";
 const projectInput = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  image: z.string(),
+  image: z.string().optional(),
   technologies: z.array(z.string()),
-  liveUrl: z.string().nullable().optional(),
-  githubUrl: z.string().nullable().optional(),
+  liveUrl: z.string().nullable().optional().or(z.literal("")),
+  githubUrl: z.string().nullable().optional().or(z.literal("")),
   featured: z.boolean(),
 });
 
@@ -46,10 +46,10 @@ export const createProject = createServerFn({ method: "POST" })
       .values({
         title: data.title,
         description: data.description,
-        image: data.image,
+        image: data.image || "/projects/placeholder.jpg",
         technologies: data.technologies,
-        liveUrl: data.liveUrl,
-        githubUrl: data.githubUrl,
+        liveUrl: data.liveUrl || null,
+        githubUrl: data.githubUrl || null,
         featured: data.featured,
       })
       .returning();
@@ -65,10 +65,10 @@ export const updateProject = createServerFn({ method: "POST" })
       .set({
         title: data.title,
         description: data.description,
-        image: data.image,
+        image: data.image || "/projects/placeholder.jpg",
         technologies: data.technologies,
-        liveUrl: data.liveUrl,
-        githubUrl: data.githubUrl,
+        liveUrl: data.liveUrl || null,
+        githubUrl: data.githubUrl || null,
         featured: data.featured,
         updatedAt: new Date(),
       })

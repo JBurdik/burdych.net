@@ -233,7 +233,19 @@ function AdminProjects() {
         size="lg"
       >
         <ProjectForm
-          defaultValues={selectedProject || undefined}
+          defaultValues={
+            selectedProject
+              ? {
+                  title: selectedProject.title,
+                  description: selectedProject.description,
+                  image: selectedProject.image ?? undefined,
+                  technologies: selectedProject.technologies ?? [],
+                  liveUrl: selectedProject.liveUrl ?? undefined,
+                  githubUrl: selectedProject.githubUrl ?? undefined,
+                  featured: selectedProject.featured ?? false,
+                }
+              : undefined
+          }
           onSubmit={handleSubmit}
           onCancel={() => {
             setIsModalOpen(false);
