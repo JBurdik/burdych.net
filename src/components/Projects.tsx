@@ -1,10 +1,21 @@
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { useRef, type MouseEvent } from "react";
 import { projects } from "../data/portfolio";
-import { FadeUp, GradientText, StaggerContainer, StaggerItem } from "./ui/AnimatedText";
+import {
+  FadeUp,
+  GradientText,
+  StaggerContainer,
+  StaggerItem,
+} from "./ui/AnimatedText";
 import { ExternalLink, Github, Folder } from "lucide-react";
 
-function ProjectCard({ project, index }: { project: (typeof projects)[0]; index: number }) {
+function ProjectCard({
+  project,
+  index,
+}: {
+  project: (typeof projects)[0];
+  index: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -66,10 +77,10 @@ function ProjectCard({ project, index }: { project: (typeof projects)[0]; index:
         />
 
         {/* Project image placeholder with gradient */}
-        <div className="relative h-48 md:h-64 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-pink-500/10 overflow-hidden">
+        <div className="relative h-48 md:h-64 bg-gradient-to-br from-cyan-500/10 via-teal-500/10 to-emerald-500/10 overflow-hidden">
           {/* Animated gradient overlay */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20"
+            className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20"
             animate={{
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
             }}
@@ -112,9 +123,9 @@ function ProjectCard({ project, index }: { project: (typeof projects)[0]; index:
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-3 rounded-full bg-white/10 hover:bg-purple-500/20 transition-colors"
+                className="p-3 rounded-full bg-white/10 hover:bg-emerald-500/20 transition-colors"
               >
-                <Github className="w-6 h-6 text-purple-400" />
+                <Github className="w-6 h-6 text-emerald-400" />
               </motion.a>
             )}
           </motion.div>
@@ -127,7 +138,7 @@ function ProjectCard({ project, index }: { project: (typeof projects)[0]; index:
             <motion.span
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-400 border border-cyan-500/30 mb-3"
+              className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 text-cyan-400 border border-cyan-500/30 mb-3"
             >
               Featured
             </motion.span>
@@ -217,7 +228,10 @@ export function Projects() {
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {otherProjects.map((project, index) => (
                 <StaggerItem key={project.id}>
-                  <ProjectCard project={project} index={index + featuredProjects.length} />
+                  <ProjectCard
+                    project={project}
+                    index={index + featuredProjects.length}
+                  />
                 </StaggerItem>
               ))}
             </StaggerContainer>

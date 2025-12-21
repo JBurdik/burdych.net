@@ -153,15 +153,30 @@ export const projects: Project[] = [
 export const technologies: Technology[] = [
   // Frontend
   { name: "React", icon: "react", category: "frontend", proficiency: 95 },
-  { name: "TypeScript", icon: "typescript", category: "frontend", proficiency: 90 },
+  {
+    name: "TypeScript",
+    icon: "typescript",
+    category: "frontend",
+    proficiency: 90,
+  },
   { name: "Next.js", icon: "nextjs", category: "frontend", proficiency: 88 },
-  { name: "Tailwind CSS", icon: "tailwind", category: "frontend", proficiency: 92 },
+  {
+    name: "Tailwind CSS",
+    icon: "tailwind",
+    category: "frontend",
+    proficiency: 92,
+  },
   { name: "Vue.js", icon: "vue", category: "frontend", proficiency: 75 },
 
   // Backend
   { name: "Node.js", icon: "nodejs", category: "backend", proficiency: 88 },
   { name: "Python", icon: "python", category: "backend", proficiency: 80 },
-  { name: "PostgreSQL", icon: "postgresql", category: "backend", proficiency: 85 },
+  {
+    name: "PostgreSQL",
+    icon: "postgresql",
+    category: "backend",
+    proficiency: 85,
+  },
   { name: "GraphQL", icon: "graphql", category: "backend", proficiency: 78 },
   { name: "Redis", icon: "redis", category: "backend", proficiency: 72 },
 
@@ -174,7 +189,7 @@ export const technologies: Technology[] = [
 ];
 
 export const about: About = {
-  name: "John Developer",
+  name: "Jirka Burdych",
   title: "Full-Stack Developer & UI/UX Enthusiast",
   bio: `I'm a passionate developer with 8+ years of experience building web applications that make a difference. I love turning complex problems into simple, beautiful solutions.
 
@@ -182,12 +197,16 @@ When I'm not coding, you'll find me exploring new technologies, contributing to 
 
 I believe in writing clean, maintainable code and creating user experiences that delight. Let's build something amazing together!`,
   avatar: "/avatar.jpg",
-  location: "San Francisco, CA",
-  email: "hello@example.com",
+  location: "Czech Republic",
+  email: "hello@burdych.net",
   socials: [
-    { name: "GitHub", url: "https://github.com/example", icon: "github" },
-    { name: "LinkedIn", url: "https://linkedin.com/in/example", icon: "linkedin" },
-    { name: "Twitter", url: "https://twitter.com/example", icon: "twitter" },
-    { name: "Email", url: "mailto:hello@example.com", icon: "mail" },
+    { name: "GitHub", url: "https://github.com/jirkab", icon: "github" },
+    {
+      name: "LinkedIn",
+      url: "https://linkedin.com/in/jirkab",
+      icon: "linkedin",
+    },
+    { name: "Twitter", url: "https://twitter.com/jirkab", icon: "twitter" },
+    { name: "Email", url: "mailto:hello@burdych.net", icon: "mail" },
   ],
 };

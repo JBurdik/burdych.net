@@ -52,7 +52,7 @@ export function GlowCard({
           background: useMotionTemplate`
             radial-gradient(
               200px circle at ${mouseX}px ${mouseY}px,
-              rgba(168, 85, 247, 0.4),
+              rgba(20, 184, 166, 0.4),
               transparent 80%
             )
           `,
@@ -86,7 +86,7 @@ export function SimpleGlowCard({
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
       {/* Gradient border on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       {/* Content */}
       <div className="relative z-10 bg-[#12121a]/90 m-[1px] rounded-2xl">

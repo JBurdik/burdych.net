@@ -30,7 +30,7 @@ function TimelineCard({
       <div className="flex-1">
         <GlowCard className="p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/20">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 border border-cyan-500/20">
               <Briefcase className="w-6 h-6 text-cyan-400" />
             </div>
             <div className="flex-1">
@@ -75,7 +75,7 @@ function TimelineCard({
             transition={{ duration: 2, repeat: Infinity }}
             className="absolute inset-0 rounded-full bg-cyan-500"
           />
-          <div className="w-4 h-4 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 relative z-10" />
+          <div className="w-4 h-4 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 relative z-10" />
         </motion.div>
       </div>
 
@@ -111,7 +111,7 @@ export function Experience() {
       className="relative py-24 md:py-32 bg-[#0a0a0f]"
     >
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/5 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-teal-500/5 to-transparent" />
 
       <div className="max-w-6xl mx-auto px-6">
         {/* Section header */}
@@ -133,7 +133,7 @@ export function Experience() {
           {/* Vertical line - hidden on mobile */}
           <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent">
             <motion.div
-              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-cyan-500 via-purple-500 to-pink-500"
+              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-cyan-500 via-teal-500 to-emerald-500"
               style={{ height: lineHeight }}
             />
           </div>

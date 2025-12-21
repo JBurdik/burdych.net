@@ -57,17 +57,17 @@ export function MagneticButton({
         className={`relative inline-flex items-center justify-center overflow-hidden rounded-full font-medium transition-all ${className}`}
       >
         {/* Gradient background */}
-        <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500" />
+        <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500" />
 
         {/* Animated gradient overlay */}
         <motion.span
-          className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 opacity-0"
+          className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 opacity-0"
           whileHover={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
         />
 
         {/* Glow effect */}
-        <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+        <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
 
         {/* Content */}
         <span className="relative z-10 px-8 py-3 text-white">{children}</span>
@@ -125,19 +125,19 @@ export function MagneticOutlineButton({
         className={`group relative inline-flex items-center justify-center overflow-hidden rounded-full font-medium ${className}`}
       >
         {/* Border gradient */}
-        <span className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 p-[2px]">
+        <span className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 p-[2px]">
           <span className="absolute inset-[2px] rounded-full bg-[#0a0a0f]" />
         </span>
 
         {/* Hover fill */}
         <motion.span
-          className="absolute inset-[2px] rounded-full bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 opacity-0"
+          className="absolute inset-[2px] rounded-full bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20 opacity-0"
           whileHover={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
         />
 
         {/* Content */}
-        <span className="relative z-10 px-8 py-3 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+        <span className="relative z-10 px-8 py-3 bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent">
           {children}
         </span>
       </Component>

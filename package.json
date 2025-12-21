@@ -17,6 +17,7 @@
     "@tanstack/react-start": "^1.132.0",
     "@tanstack/router-plugin": "^1.132.0",
     "framer-motion": "^12.23.26",
+    "lenis": "^1.3.16",
     "lucide-react": "^0.544.0",
     "nitro": "latest",
     "react": "^19.2.0",

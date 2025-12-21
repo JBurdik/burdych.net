@@ -7,7 +7,11 @@ interface AnimatedTextProps {
 }
 
 // Staggered letter animation
-export function AnimatedText({ text, className = "", delay = 0 }: AnimatedTextProps) {
+export function AnimatedText({
+  text,
+  className = "",
+  delay = 0,
+}: AnimatedTextProps) {
   const letters = text.split("");
 
   const container = {
@@ -70,7 +74,7 @@ export function GradientText({
 }) {
   return (
     <span
-      className={`bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient ${className}`}
+      className={`bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient ${className}`}
     >
       {children}
     </span>

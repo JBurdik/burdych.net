@@ -3,7 +3,14 @@ import { useRef, type MouseEvent } from "react";
 import { about } from "../data/portfolio";
 import { FadeUp, GradientText } from "./ui/AnimatedText";
 import { MagneticButton } from "./ui/MagneticButton";
-import { Github, Linkedin, Twitter, Mail, MapPin, Download } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  Twitter,
+  Mail,
+  MapPin,
+  Download,
+} from "lucide-react";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   github: Github,
@@ -12,7 +19,13 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   mail: Mail,
 };
 
-function SocialLink({ social, index }: { social: (typeof about.socials)[0]; index: number }) {
+function SocialLink({
+  social,
+  index,
+}: {
+  social: (typeof about.socials)[0];
+  index: number;
+}) {
   const Icon = iconMap[social.icon];
   const ref = useRef<HTMLAnchorElement>(null);
 
@@ -55,9 +68,7 @@ function SocialLink({ social, index }: { social: (typeof about.socials)[0]; inde
       className="group relative p-4 rounded-2xl border border-white/10 bg-[#12121a]/80 backdrop-blur-sm hover:border-cyan-500/50 transition-colors"
     >
       {/* Glow effect */}
-      <motion.div
-        className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity"
-      />
+      <motion.div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity" />
 
       {Icon && (
         <Icon className="relative z-10 w-6 h-6 text-gray-400 group-hover:text-cyan-400 transition-colors" />
@@ -77,8 +88,14 @@ function AnimatedAvatar() {
   const mouseY = useMotionValue(0);
 
   const springConfig = { damping: 20, stiffness: 150 };
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10]), springConfig);
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), springConfig);
+  const rotateX = useSpring(
+    useTransform(mouseY, [-0.5, 0.5], [10, -10]),
+    springConfig,
+  );
+  const rotateY = useSpring(
+    useTransform(mouseX, [-0.5, 0.5], [-10, 10]),
+    springConfig,
+  );
 
   function handleMouseMove(e: MouseEvent) {
     if (!ref.current) return;
@@ -109,23 +126,26 @@ function AnimatedAvatar() {
         className="relative"
       >
         {/* Gradient border */}
-        <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 opacity-75 blur-sm" />
+        <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 opacity-75 blur-sm" />
 
         {/* Avatar container */}
-        <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-3xl bg-gradient-to-br from-cyan-500/20 via-purple-500/20 to-pink-500/20 border border-white/10 overflow-hidden">
+        <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-3xl bg-gradient-to-br from-cyan-500/20 via-teal-500/20 to-emerald-500/20 border border-white/10 overflow-hidden">
           {/* Placeholder gradient - replace with actual image */}
           <div className="absolute inset-0 bg-gradient-to-br from-[#12121a] to-[#1e1e2e]" />
 
           {/* Initials as placeholder */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              {about.name.split(" ").map(n => n[0]).join("")}
+            <span className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent">
+              {about.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </span>
           </div>
 
           {/* Animated overlay */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-purple-500/10"
+            className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-teal-500/10"
             animate={{
               x: ["-100%", "100%"],
             }}
@@ -149,7 +169,7 @@ function AnimatedAvatar() {
         <motion.div
           animate={{ y: [0, 10, 0], rotate: [0, -5, 0] }}
           transition={{ duration: 5, repeat: Infinity }}
-          className="absolute -bottom-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30"
+          className="absolute -bottom-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/30"
         >
           <span className="text-xl">🚀</span>
         </motion.div>
@@ -164,14 +184,12 @@ export function About() {
   return (
     <section id="about" className="relative py-24 md:py-32 bg-[#0a0a0f]">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/5 to-cyan-500/5" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-teal-500/5 to-cyan-500/5" />
 
       <div className="relative max-w-6xl mx-auto px-6">
         {/* Section header */}
         <FadeUp className="text-center mb-16">
-          <p className="text-cyan-400 font-mono text-sm mb-4">
-            Get To Know Me
-          </p>
+          <p className="text-cyan-400 font-mono text-sm mb-4">Get To Know Me</p>
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             About <GradientText>Me</GradientText>
           </h2>
@@ -218,7 +236,7 @@ export function About() {
                 href={`mailto:${about.email}`}
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:border-cyan-500/50 transition-colors"
               >
-                <Mail className="w-4 h-4 text-purple-400" />
+                <Mail className="w-4 h-4 text-teal-400" />
                 <span className="text-gray-300 text-sm">{about.email}</span>
               </a>
             </motion.div>

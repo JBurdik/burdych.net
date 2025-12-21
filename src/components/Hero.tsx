@@ -24,9 +24,9 @@ function FloatingOrbs() {
         style={{ top: "10%", left: "10%" }}
       />
 
-      {/* Medium purple orb */}
+      {/* Medium teal orb */}
       <motion.div
-        className="absolute w-[400px] h-[400px] rounded-full bg-purple-500/20 blur-[80px]"
+        className="absolute w-[400px] h-[400px] rounded-full bg-teal-500/20 blur-[80px]"
         animate={{
           x: [0, -80, 0],
           y: [0, 80, 0],
@@ -39,9 +39,9 @@ function FloatingOrbs() {
         style={{ top: "30%", right: "15%" }}
       />
 
-      {/* Small pink orb */}
+      {/* Small emerald orb */}
       <motion.div
-        className="absolute w-[300px] h-[300px] rounded-full bg-pink-500/15 blur-[60px]"
+        className="absolute w-[300px] h-[300px] rounded-full bg-emerald-500/15 blur-[60px]"
         animate={{
           x: [0, 50, 0],
           y: [0, 100, 0],
@@ -67,7 +67,7 @@ function Particles() {
       size: Math.random() * 3 + 1,
       duration: Math.random() * 20 + 10,
       delay: Math.random() * 5,
-    }))
+    })),
   );
 
   return (
@@ -132,7 +132,10 @@ function CursorGlow() {
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section
+      id="hero"
+      className="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-20"
+    >
       {/* Background */}
       <div className="absolute inset-0 bg-[#0a0a0f]" />
       <FloatingOrbs />
@@ -183,8 +186,8 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 1 }}
           className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
         >
-          I craft exceptional digital experiences with clean code and creative solutions.
-          Let's build something amazing together.
+          I craft exceptional digital experiences with clean code and creative
+          solutions. Let's build something amazing together.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -194,9 +197,7 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 1.2 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <MagneticButton href="#projects">
-            View My Work
-          </MagneticButton>
+          <MagneticButton href="#projects">View My Work</MagneticButton>
           <MagneticOutlineButton href="#about">
             Get In Touch
           </MagneticOutlineButton>
