@@ -209,10 +209,10 @@ Ve volném čase se věnuji hraní stolního tenisu (ping pongu), což mi pomáh
   phone: "+420 605 589 517",
   cvUrl: "/CV.pdf",
   socials: [
-    { name: "GitHub", url: "https://github.com/jirkab", icon: "github" },
+    { name: "GitHub", url: "https://github.com/JBurdik/", icon: "github" },
     {
       name: "LinkedIn",
-      url: "https://linkedin.com/in/jirkab",
+      url: "https://www.linkedin.com/in/jiří-burdych-4649b2167/",
       icon: "linkedin",
     },
     { name: "Email", url: "mailto:jiri.burdych@icloud.com", icon: "mail" },

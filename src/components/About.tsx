@@ -10,6 +10,8 @@ import {
   Mail,
   MapPin,
   Download,
+  Monitor,
+  Rocket,
 } from "lucide-react";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -157,7 +159,7 @@ function AnimatedAvatar() {
           transition={{ duration: 4, repeat: Infinity }}
           className="absolute -top-4 -right-4 w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center shadow-lg shadow-cyan-500/30"
         >
-          <span className="text-xl">💻</span>
+          <Monitor className="w-6 h-6 text-white" />
         </motion.div>
 
         <motion.div
@@ -165,7 +167,7 @@ function AnimatedAvatar() {
           transition={{ duration: 5, repeat: Infinity }}
           className="absolute -bottom-4 -left-4 w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/30"
         >
-          <span className="text-xl">🚀</span>
+          <Rocket className="w-6 h-6 text-white" />
         </motion.div>
       </motion.div>
     </motion.div>
