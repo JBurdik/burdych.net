@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import { experiences } from "../data/portfolio";
+import type { Experience } from "../db/schema";
 import { GlowCard } from "./ui/GlowCard";
 import { FadeUp, GradientText } from "./ui/AnimatedText";
 import { Briefcase } from "lucide-react";
@@ -9,7 +9,7 @@ function TimelineCard({
   experience,
   index,
 }: {
-  experience: (typeof experiences)[0];
+  experience: Experience;
   index: number;
 }) {
   const isEven = index % 2 === 0;
@@ -47,7 +47,7 @@ function TimelineCard({
 
           {/* Technologies */}
           <div className="flex flex-wrap gap-2">
-            {experience.technologies.map((tech) => (
+            {(experience.technologies ?? []).map((tech) => (
               <motion.span
                 key={tech}
                 whileHover={{ scale: 1.05, y: -2 }}
@@ -95,7 +95,11 @@ function TimelineCard({
   );
 }
 
-export function Experience() {
+interface ExperienceProps {
+  experiences: Experience[];
+}
+
+export function Experience({ experiences }: ExperienceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,

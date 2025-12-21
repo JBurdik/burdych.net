@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, Star, ExternalLink, Github } from "lucide-react";
 import { useState } from "react";
@@ -7,18 +7,29 @@ import { DataTable } from "../../components/admin/DataTable";
 import { Modal, ConfirmModal } from "../../components/admin/Modal";
 import { ProjectForm } from "../../components/admin/forms/ProjectForm";
 import { FadeUp } from "../../components/ui/AnimatedText";
-import { projects, type Project } from "../../data/portfolio";
+import type { Project } from "../../db/schema";
 import { type ProjectFormData } from "../../data/schemas";
+import {
+  getProjects,
+  createProject,
+  updateProject,
+  deleteProject,
+} from "../../server/projects";
 
 export const Route = createFileRoute("/admin/projects")({
   component: AdminProjects,
+  loader: async () => {
+    const projects = await getProjects();
+    return { projects };
+  },
 });
 
 function AdminProjects() {
+  const { projects } = Route.useLoaderData();
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [projectList, setProjectList] = useState(projects);
 
   const handleCreate = () => {
     setSelectedProject(null);
@@ -36,34 +47,35 @@ function AdminProjects() {
   };
 
   const handleSubmit = async (data: ProjectFormData) => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
     if (selectedProject) {
       // Update existing
-      setProjectList((prev) =>
-        prev.map((p) =>
-          p.id === selectedProject.id ? { ...p, ...data } : p,
-        ),
-      );
+      await updateProject({
+        data: {
+          id: selectedProject.id,
+          ...data,
+        },
+      });
     } else {
       // Create new
-      const newProject: Project = {
-        ...data,
-        id: String(Date.now()),
-        image: data.image || "/projects/placeholder.jpg",
-      };
-      setProjectList((prev) => [...prev, newProject]);
+      await createProject({
+        data: {
+          ...data,
+          image: data.image || "/projects/placeholder.jpg",
+        },
+      });
     }
 
     setIsModalOpen(false);
     setSelectedProject(null);
+    router.invalidate();
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (selectedProject) {
-      setProjectList((prev) => prev.filter((p) => p.id !== selectedProject.id));
+      await deleteProject({ data: selectedProject.id });
       setSelectedProject(null);
+      setIsDeleteModalOpen(false);
+      router.invalidate();
     }
   };
 
@@ -93,7 +105,7 @@ function AdminProjects() {
       label: "Technologie",
       render: (item: Project) => (
         <div className="flex flex-wrap gap-1">
-          {item.technologies.slice(0, 3).map((tech) => (
+          {(item.technologies ?? []).slice(0, 3).map((tech) => (
             <span
               key={tech}
               className="px-2 py-0.5 rounded-md bg-white/5 text-gray-400 text-xs"
@@ -101,9 +113,9 @@ function AdminProjects() {
               {tech}
             </span>
           ))}
-          {item.technologies.length > 3 && (
+          {(item.technologies ?? []).length > 3 && (
             <span className="px-2 py-0.5 rounded-md bg-white/5 text-gray-500 text-xs">
-              +{item.technologies.length - 3}
+              +{(item.technologies ?? []).length - 3}
             </span>
           )}
         </div>
@@ -185,9 +197,7 @@ function AdminProjects() {
       <FadeUp>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-400">
-            Celkem {projectList.length} projektů
-          </p>
+          <p className="text-gray-400">Celkem {projects.length} projektů</p>
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -201,7 +211,7 @@ function AdminProjects() {
 
         {/* Table */}
         <DataTable
-          data={projectList}
+          data={projects}
           columns={columns}
           keyField="id"
           searchFields={["title", "description"]}

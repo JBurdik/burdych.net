@@ -1,6 +1,6 @@
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { useRef, type MouseEvent } from "react";
-import { projects } from "../data/portfolio";
+import type { Project } from "../db/schema";
 import {
   FadeUp,
   GradientText,
@@ -9,13 +9,7 @@ import {
 } from "./ui/AnimatedText";
 import { ExternalLink, Github, Folder } from "lucide-react";
 
-function ProjectCard({
-  project,
-  index,
-}: {
-  project: (typeof projects)[0];
-  index: number;
-}) {
+function ProjectCard({ project, index }: { project: Project; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -154,7 +148,7 @@ function ProjectCard({
 
           {/* Tech tags */}
           <div className="flex flex-wrap gap-2">
-            {project.technologies.slice(0, 4).map((tech) => (
+            {(project.technologies || []).slice(0, 4).map((tech) => (
               <span
                 key={tech}
                 className="px-2 py-1 text-xs rounded-md bg-white/5 text-gray-400 font-mono"
@@ -162,9 +156,9 @@ function ProjectCard({
                 {tech}
               </span>
             ))}
-            {project.technologies.length > 4 && (
+            {(project.technologies || []).length > 4 && (
               <span className="px-2 py-1 text-xs rounded-md bg-white/5 text-gray-500 font-mono">
-                +{project.technologies.length - 4}
+                +{(project.technologies || []).length - 4}
               </span>
             )}
           </div>
@@ -186,7 +180,11 @@ function ProjectCard({
   );
 }
 
-export function Projects() {
+interface ProjectsProps {
+  projects: Project[];
+}
+
+export function Projects({ projects }: ProjectsProps) {
   const featuredProjects = projects.filter((p) => p.featured);
   const otherProjects = projects.filter((p) => !p.featured);
 

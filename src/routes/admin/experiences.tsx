@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, Briefcase } from "lucide-react";
 import { useState } from "react";
@@ -7,19 +7,30 @@ import { DataTable } from "../../components/admin/DataTable";
 import { Modal, ConfirmModal } from "../../components/admin/Modal";
 import { ExperienceForm } from "../../components/admin/forms/ExperienceForm";
 import { FadeUp } from "../../components/ui/AnimatedText";
-import { experiences, type Experience } from "../../data/portfolio";
+import type { Experience } from "../../db/schema";
 import { type ExperienceFormData } from "../../data/schemas";
+import {
+  getExperiences,
+  createExperience,
+  updateExperience,
+  deleteExperience,
+} from "../../server/experiences";
 
 export const Route = createFileRoute("/admin/experiences")({
   component: AdminExperiences,
+  loader: async () => {
+    const experiences = await getExperiences();
+    return { experiences };
+  },
 });
 
 function AdminExperiences() {
+  const { experiences } = Route.useLoaderData();
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedExperience, setSelectedExperience] =
     useState<Experience | null>(null);
-  const [experienceList, setExperienceList] = useState(experiences);
 
   const handleCreate = () => {
     setSelectedExperience(null);
@@ -37,32 +48,32 @@ function AdminExperiences() {
   };
 
   const handleSubmit = async (data: ExperienceFormData) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
     if (selectedExperience) {
-      setExperienceList((prev) =>
-        prev.map((e) =>
-          e.id === selectedExperience.id ? { ...e, ...data } : e,
-        ),
-      );
+      await updateExperience({
+        data: {
+          id: selectedExperience.id,
+          ...data,
+        },
+      });
     } else {
-      const newExperience: Experience = {
-        ...data,
-        id: String(Date.now()),
-      };
-      setExperienceList((prev) => [...prev, newExperience]);
+      await createExperience({
+        data: {
+          ...data,
+        },
+      });
     }
 
     setIsModalOpen(false);
     setSelectedExperience(null);
+    router.invalidate();
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (selectedExperience) {
-      setExperienceList((prev) =>
-        prev.filter((e) => e.id !== selectedExperience.id),
-      );
+      await deleteExperience({ data: selectedExperience.id });
       setSelectedExperience(null);
+      setIsDeleteModalOpen(false);
+      router.invalidate();
     }
   };
 
@@ -96,7 +107,7 @@ function AdminExperiences() {
       label: "Technologie",
       render: (item: Experience) => (
         <div className="flex flex-wrap gap-1">
-          {item.technologies.slice(0, 3).map((tech) => (
+          {(item.technologies ?? []).slice(0, 3).map((tech) => (
             <span
               key={tech}
               className="px-2 py-0.5 rounded-md bg-white/5 text-gray-400 text-xs"
@@ -104,12 +115,12 @@ function AdminExperiences() {
               {tech}
             </span>
           ))}
-          {item.technologies.length > 3 && (
+          {(item.technologies ?? []).length > 3 && (
             <span className="px-2 py-0.5 rounded-md bg-white/5 text-gray-500 text-xs">
-              +{item.technologies.length - 3}
+              +{(item.technologies ?? []).length - 3}
             </span>
           )}
-          {item.technologies.length === 0 && (
+          {(item.technologies ?? []).length === 0 && (
             <span className="text-gray-600 text-xs">-</span>
           )}
         </div>
@@ -158,7 +169,7 @@ function AdminExperiences() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-400">
-            Celkem {experienceList.length} zkušeností
+            Celkem {experiences.length} zkušeností
           </p>
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -173,7 +184,7 @@ function AdminExperiences() {
 
         {/* Table */}
         <DataTable
-          data={experienceList}
+          data={experiences}
           columns={columns}
           keyField="id"
           searchFields={["role", "company", "description"]}

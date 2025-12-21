@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -15,13 +15,23 @@ import {
   Trash2,
 } from "lucide-react";
 import { AdminLayout } from "../../components/admin/AdminLayout";
-import { about, type Social } from "../../data/portfolio";
+import type { Social } from "../../db/schema";
 import { Modal, ConfirmModal } from "../../components/admin/Modal";
 import { AboutForm } from "../../components/admin/forms/AboutForm";
 import type { AboutFormData } from "../../data/schemas";
+import {
+  getAbout,
+  updateAbout,
+  addSocial,
+  deleteSocial,
+} from "../../server/about";
 
 export const Route = createFileRoute("/admin/settings")({
   component: SettingsPage,
+  loader: async () => {
+    const about = await getAbout();
+    return { about };
+  },
 });
 
 const socialIcons: Record<string, React.ElementType> = {
@@ -31,43 +41,55 @@ const socialIcons: Record<string, React.ElementType> = {
 };
 
 function SettingsPage() {
+  const { about: aboutData } = Route.useLoaderData();
+  const router = useRouter();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isAddingSocial, setIsAddingSocial] = useState(false);
   const [deletingSocial, setDeletingSocial] = useState<Social | null>(null);
 
-  // Local state for about data (will be replaced with API calls)
-  const [aboutData, setAboutData] = useState(about);
-
   // New social form state
   const [newSocial, setNewSocial] = useState({ name: "", url: "", icon: "" });
 
+  if (!aboutData) {
+    return (
+      <AdminLayout>
+        <div className="text-center py-12 text-gray-500">
+          Žádné údaje k zobrazení. Vytvořte profil v databázi.
+        </div>
+      </AdminLayout>
+    );
+  }
+
   const handleSaveProfile = async (data: AboutFormData) => {
-    // In real app, this would be an API call
-    setAboutData((prev) => ({
-      ...prev,
-      ...data,
-    }));
+    await updateAbout({
+      data: {
+        id: aboutData.id,
+        ...data,
+      },
+    });
     setIsEditingProfile(false);
+    router.invalidate();
   };
 
-  const handleAddSocial = () => {
+  const handleAddSocial = async () => {
     if (newSocial.name && newSocial.url && newSocial.icon) {
-      setAboutData((prev) => ({
-        ...prev,
-        socials: [...prev.socials, newSocial],
-      }));
+      await addSocial({
+        data: {
+          aboutId: aboutData.id,
+          ...newSocial,
+        },
+      });
       setNewSocial({ name: "", url: "", icon: "" });
       setIsAddingSocial(false);
+      router.invalidate();
     }
   };
 
-  const handleDeleteSocial = () => {
+  const handleDeleteSocial = async () => {
     if (deletingSocial) {
-      setAboutData((prev) => ({
-        ...prev,
-        socials: prev.socials.filter((s) => s.url !== deletingSocial.url),
-      }));
+      await deleteSocial({ data: deletingSocial.id });
       setDeletingSocial(null);
+      router.invalidate();
     }
   };
 

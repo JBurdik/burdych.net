@@ -7,10 +7,27 @@ import { About } from "../components/About";
 import { Footer } from "../components/Footer";
 import { ScrollProgress } from "../components/ui/ScrollProgress";
 import { SmoothScroll } from "../components/SmoothScroll";
+import { getProjects } from "../server/projects";
+import { getExperiences } from "../server/experiences";
+import { getTechnologies } from "../server/technologies";
+import { getAbout } from "../server/about";
 
-export const Route = createFileRoute("/")({ component: App });
+export const Route = createFileRoute("/")({
+  component: App,
+  loader: async () => {
+    const [projects, experiences, technologies, about] = await Promise.all([
+      getProjects(),
+      getExperiences(),
+      getTechnologies(),
+      getAbout(),
+    ]);
+    return { projects, experiences, technologies, about };
+  },
+});
 
 function App() {
+  const { projects, experiences, technologies, about } = Route.useLoaderData();
+
   return (
     <SmoothScroll>
       <main className="relative">
@@ -22,10 +39,10 @@ function App() {
 
         {/* Sections */}
         <Hero />
-        <Experience />
-        <Projects />
-        <Technologies />
-        <About />
+        <Experience experiences={experiences} />
+        <Projects projects={projects} />
+        <Technologies technologies={technologies} />
+        {about && <About about={about} />}
         <Footer />
       </main>
     </SmoothScroll>

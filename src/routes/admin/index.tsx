@@ -13,13 +13,25 @@ import { AdminLayout } from "../../components/admin/AdminLayout";
 import { StatCard } from "../../components/admin/StatCard";
 import { GlowCard } from "../../components/ui/GlowCard";
 import { FadeUp, GradientText } from "../../components/ui/AnimatedText";
-import { experiences, projects, technologies } from "../../data/portfolio";
+import { getProjects } from "../../server/projects";
+import { getExperiences } from "../../server/experiences";
+import { getTechnologies } from "../../server/technologies";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
+  loader: async () => {
+    const [projects, experiences, technologies] = await Promise.all([
+      getProjects(),
+      getExperiences(),
+      getTechnologies(),
+    ]);
+    return { projects, experiences, technologies };
+  },
 });
 
 function AdminDashboard() {
+  const { projects, experiences, technologies } = Route.useLoaderData();
+
   const stats = [
     {
       title: "Celkem projektů",
@@ -143,8 +155,8 @@ function AdminDashboard() {
                         {project.title}
                       </p>
                       <p className="text-gray-500 text-xs">
-                        {project.technologies.slice(0, 2).join(", ")}
-                        {project.technologies.length > 2 && "..."}
+                        {(project.technologies ?? []).slice(0, 2).join(", ")}
+                        {(project.technologies ?? []).length > 2 && "..."}
                       </p>
                     </div>
                   </div>

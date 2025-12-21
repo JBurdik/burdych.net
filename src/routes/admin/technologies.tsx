@@ -1,16 +1,30 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, Code2 } from "lucide-react";
 import { useState } from "react";
 import { AdminLayout } from "../../components/admin/AdminLayout";
 import { Modal, ConfirmModal } from "../../components/admin/Modal";
 import { TechnologyForm } from "../../components/admin/forms/TechnologyForm";
-import { FadeUp, StaggerContainer, StaggerItem } from "../../components/ui/AnimatedText";
-import { technologies, type Technology } from "../../data/portfolio";
+import {
+  FadeUp,
+  StaggerContainer,
+  StaggerItem,
+} from "../../components/ui/AnimatedText";
+import type { Technology } from "../../db/schema";
 import { type TechnologyFormData } from "../../data/schemas";
+import {
+  getTechnologies,
+  createTechnology,
+  updateTechnology,
+  deleteTechnology,
+} from "../../server/technologies";
 
 export const Route = createFileRoute("/admin/technologies")({
   component: AdminTechnologies,
+  loader: async () => {
+    const technologies = await getTechnologies();
+    return { technologies };
+  },
 });
 
 const categoryLabels: Record<string, string> = {
@@ -76,7 +90,9 @@ function TechnologyCard({
       <h3 className="text-white font-medium mb-1">{tech.name}</h3>
 
       {/* Category */}
-      <p className="text-gray-400 text-xs mb-3">{categoryLabels[tech.category]}</p>
+      <p className="text-gray-400 text-xs mb-3">
+        {categoryLabels[tech.category]}
+      </p>
 
       {/* Proficiency bar */}
       <div className="space-y-1">
@@ -98,17 +114,18 @@ function TechnologyCard({
 }
 
 function AdminTechnologies() {
+  const { technologies } = Route.useLoaderData();
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedTech, setSelectedTech] = useState<Technology | null>(null);
-  const [techList, setTechList] = useState(technologies);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const categories = ["frontend", "backend", "tools", "other"];
 
   const filteredTech = activeCategory
-    ? techList.filter((t) => t.category === activeCategory)
-    : techList;
+    ? technologies.filter((t) => t.category === activeCategory)
+    : technologies;
 
   const handleCreate = () => {
     setSelectedTech(null);
@@ -126,29 +143,32 @@ function AdminTechnologies() {
   };
 
   const handleSubmit = async (data: TechnologyFormData) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
     if (selectedTech) {
-      setTechList((prev) =>
-        prev.map((t) =>
-          t.name === selectedTech.name ? { ...t, ...data } : t,
-        ),
-      );
+      await updateTechnology({
+        data: {
+          id: selectedTech.id,
+          ...data,
+        },
+      });
     } else {
-      const newTech: Technology = {
-        ...data,
-      };
-      setTechList((prev) => [...prev, newTech]);
+      await createTechnology({
+        data: {
+          ...data,
+        },
+      });
     }
 
     setIsModalOpen(false);
     setSelectedTech(null);
+    router.invalidate();
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (selectedTech) {
-      setTechList((prev) => prev.filter((t) => t.name !== selectedTech.name));
+      await deleteTechnology({ data: selectedTech.id });
       setSelectedTech(null);
+      setIsDeleteModalOpen(false);
+      router.invalidate();
     }
   };
 
@@ -158,7 +178,7 @@ function AdminTechnologies() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <p className="text-gray-400">
-            Celkem {techList.length} technologií
+            Celkem {technologies.length} technologií
           </p>
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -183,10 +203,10 @@ function AdminTechnologies() {
                 : "bg-white/5 text-gray-400 border border-white/10 hover:text-white"
             }`}
           >
-            Všechny ({techList.length})
+            Všechny ({technologies.length})
           </motion.button>
           {categories.map((cat) => {
-            const count = techList.filter((t) => t.category === cat).length;
+            const count = technologies.filter((t) => t.category === cat).length;
             return (
               <motion.button
                 key={cat}

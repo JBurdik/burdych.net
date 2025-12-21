@@ -1,6 +1,6 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, type MouseEvent } from "react";
-import { about } from "../data/portfolio";
+import type { About as AboutType, Social } from "../db/schema";
 import { FadeUp, GradientText } from "./ui/AnimatedText";
 import { MagneticButton } from "./ui/MagneticButton";
 import {
@@ -14,6 +14,9 @@ import {
   Rocket,
 } from "lucide-react";
 
+// About with socials type (as returned by getAbout)
+export type AboutWithSocials = AboutType & { socials: Social[] };
+
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   github: Github,
   linkedin: Linkedin,
@@ -21,13 +24,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   mail: Mail,
 };
 
-function SocialLink({
-  social,
-  index,
-}: {
-  social: (typeof about.socials)[0];
-  index: number;
-}) {
+function SocialLink({ social, index }: { social: Social; index: number }) {
   const Icon = iconMap[social.icon];
   const ref = useRef<HTMLAnchorElement>(null);
 
@@ -84,7 +81,7 @@ function SocialLink({
   );
 }
 
-function AnimatedAvatar() {
+function AnimatedAvatar({ about }: { about: AboutWithSocials }) {
   const ref = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -174,7 +171,11 @@ function AnimatedAvatar() {
   );
 }
 
-export function About() {
+interface AboutProps {
+  about: AboutWithSocials;
+}
+
+export function About({ about }: AboutProps) {
   const bioLines = about.bio.split("\n\n");
 
   return (
@@ -197,7 +198,7 @@ export function About() {
         <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
           {/* Avatar */}
           <div className="flex justify-center">
-            <AnimatedAvatar />
+            <AnimatedAvatar about={about} />
           </div>
 
           {/* Info */}
@@ -267,18 +268,20 @@ export function About() {
                 </span>
               </MagneticButton>
 
-              <motion.a
-                href={about.cvUrl}
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 transition-colors font-medium"
-              >
-                <Download className="w-4 h-4" />
-                Stáhnout CV
-              </motion.a>
+              {about.cvUrl && (
+                <motion.a
+                  href={about.cvUrl}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 transition-colors font-medium"
+                >
+                  <Download className="w-4 h-4" />
+                  Stáhnout CV
+                </motion.a>
+              )}
             </motion.div>
           </div>
         </div>

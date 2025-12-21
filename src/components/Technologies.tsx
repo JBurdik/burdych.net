@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { technologies } from "../data/portfolio";
+import type { Technology } from "../db/schema";
 import {
   FadeUp,
   GradientText,
@@ -68,13 +68,7 @@ const categoryColors = {
   },
 };
 
-function TechCard({
-  tech,
-  index,
-}: {
-  tech: (typeof technologies)[0];
-  index: number;
-}) {
+function TechCard({ tech, index }: { tech: Technology; index: number }) {
   const Icon = iconMap[tech.icon];
   const colors = categoryColors[tech.category];
 
@@ -169,7 +163,11 @@ function TechCard({
   );
 }
 
-export function Technologies() {
+interface TechnologiesProps {
+  technologies: Technology[];
+}
+
+export function Technologies({ technologies }: TechnologiesProps) {
   const frontend = technologies.filter((t) => t.category === "frontend");
   const backend = technologies.filter((t) => t.category === "backend");
   const tools = technologies.filter((t) => t.category === "tools");
