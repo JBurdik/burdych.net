@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AnimatedText, GradientText } from "./ui/AnimatedText";
 import { MagneticButton, MagneticOutlineButton } from "./ui/MagneticButton";
 import { about } from "../data/portfolio";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Download } from "lucide-react";
 
 // Floating orbs background
 function FloatingOrbs() {
@@ -161,7 +161,7 @@ export function Hero() {
           transition={{ duration: 0.6 }}
           className="text-cyan-400 font-mono text-lg mb-6"
         >
-          Hi, my name is
+          Ahoj, jmenuji se
         </motion.p>
 
         {/* Name */}
@@ -186,8 +186,8 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 1 }}
           className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
         >
-          I craft exceptional digital experiences with clean code and creative
-          solutions. Let's build something amazing together.
+          Tvořím výjimečné digitální zážitky s čistým kódem a kreativními
+          řešeními. Pojďme spolu vytvořit něco úžasného.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -197,9 +197,10 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 1.2 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <MagneticButton href="#projects">View My Work</MagneticButton>
-          <MagneticOutlineButton href="#about">
-            Get In Touch
+          <MagneticButton href="#projects">Moje projekty</MagneticButton>
+          <MagneticOutlineButton href={about.cvUrl || "/CV.pdf"}>
+            <Download className="w-4 h-4 mr-2" />
+            Stáhnout CV
           </MagneticOutlineButton>
         </motion.div>
       </div>

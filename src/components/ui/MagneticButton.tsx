@@ -137,7 +137,7 @@ export function MagneticOutlineButton({
         />
 
         {/* Content */}
-        <span className="relative z-10 px-8 py-3 bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent">
+        <span className="relative z-10 px-8 py-3 flex items-center bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent [&>svg]:text-cyan-400">
           {children}
         </span>
       </Component>
