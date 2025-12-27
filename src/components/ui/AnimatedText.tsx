@@ -1,4 +1,23 @@
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+
+// Detect mobile/touch devices
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(
+        window.innerWidth < 768 ||
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0,
+      );
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
 
 interface AnimatedTextProps {
   text: string;
@@ -6,12 +25,13 @@ interface AnimatedTextProps {
   delay?: number;
 }
 
-// Staggered letter animation
+// Staggered letter animation - optimized for mobile (no blur filter)
 export function AnimatedText({
   text,
   className = "",
   delay = 0,
 }: AnimatedTextProps) {
+  const isMobile = useIsMobile();
   const letters = text.split("");
 
   const container = {
@@ -19,29 +39,43 @@ export function AnimatedText({
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.03,
+        staggerChildren: isMobile ? 0.02 : 0.03,
         delayChildren: delay,
       },
     },
   };
 
-  const child = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-      filter: "blur(10px)",
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: {
-        type: "spring",
-        damping: 12,
-        stiffness: 100,
-      },
-    },
-  };
+  // Avoid filter: blur() on mobile - it's very expensive on Safari
+  const child = isMobile
+    ? {
+        hidden: { opacity: 0, y: 10 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            type: "spring" as const,
+            damping: 20,
+            stiffness: 150,
+          },
+        },
+      }
+    : {
+        hidden: {
+          opacity: 0,
+          y: 20,
+          filter: "blur(10px)",
+        },
+        visible: {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          transition: {
+            type: "spring" as const,
+            damping: 12,
+            stiffness: 100,
+          },
+        },
+      };
 
   return (
     <motion.span
@@ -55,7 +89,10 @@ export function AnimatedText({
           key={index}
           variants={child}
           className="inline-block"
-          style={{ whiteSpace: letter === " " ? "pre" : "normal" }}
+          style={{
+            whiteSpace: letter === " " ? "pre" : "normal",
+            willChange: "transform, opacity",
+          }}
         >
           {letter === " " ? "\u00A0" : letter}
         </motion.span>

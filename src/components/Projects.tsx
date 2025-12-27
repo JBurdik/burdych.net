@@ -1,5 +1,5 @@
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
-import { useRef, type MouseEvent } from "react";
+import { useRef, useState, useEffect, type MouseEvent } from "react";
 import type { Project } from "../db/schema";
 import {
   FadeUp,
@@ -9,13 +9,32 @@ import {
 } from "./ui/AnimatedText";
 import { ExternalLink, Github, Folder } from "lucide-react";
 
+// Detect mobile/touch devices
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(
+        window.innerWidth < 768 ||
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0,
+      );
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const isMobile = useIsMobile();
   const ref = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
   function handleMouseMove({ clientX, clientY }: MouseEvent) {
-    if (!ref.current) return;
+    if (isMobile || !ref.current) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     const x = (clientX - left) / width - 0.5;
     const y = (clientY - top) / height - 0.5;
@@ -35,62 +54,116 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       : "md:col-span-2"
     : "";
 
+  // Check if project has images
+  const hasImages = project.images && project.images.length > 0;
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   return (
     <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={`group relative ${gridClass}`}
-      style={{
-        transformStyle: "preserve-3d",
-        perspective: "1000px",
-      }}
+      style={
+        isMobile
+          ? undefined
+          : {
+              transformStyle: "preserve-3d",
+              perspective: "1000px",
+            }
+      }
     >
       <motion.div
         className="relative h-full rounded-2xl border border-white/10 bg-[#12121a]/80 backdrop-blur-sm overflow-hidden"
-        style={{
-          rotateX: useMotionTemplate`${mouseY.get() * -10}deg`,
-          rotateY: useMotionTemplate`${mouseX.get() * 10}deg`,
-        }}
-        whileHover={{
-          y: -5,
-          boxShadow: "0 25px 50px -12px rgba(6, 182, 212, 0.25)",
-        }}
+        style={
+          isMobile
+            ? undefined
+            : {
+                rotateX: useMotionTemplate`${mouseY.get() * -10}deg`,
+                rotateY: useMotionTemplate`${mouseX.get() * 10}deg`,
+              }
+        }
+        whileHover={
+          isMobile
+            ? { scale: 1.02 }
+            : {
+                y: -5,
+                boxShadow: "0 25px 50px -12px rgba(6, 182, 212, 0.25)",
+              }
+        }
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        {/* Gradient glow on hover */}
-        <motion.div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{
-            background: `radial-gradient(
-              600px circle at ${mouseX.get() * 100 + 50}% ${mouseY.get() * 100 + 50}%,
-              rgba(6, 182, 212, 0.1),
-              transparent 40%
-            )`,
-          }}
-        />
-
-        {/* Project image placeholder with gradient */}
-        <div className="relative h-48 md:h-64 bg-gradient-to-br from-cyan-500/10 via-teal-500/10 to-emerald-500/10 overflow-hidden">
-          {/* Animated gradient overlay */}
+        {/* Gradient glow on hover - skip on mobile */}
+        {!isMobile && (
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20"
-            animate={{
-              backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style={{
+              background: `radial-gradient(
+                600px circle at ${mouseX.get() * 100 + 50}% ${mouseY.get() * 100 + 50}%,
+                rgba(6, 182, 212, 0.1),
+                transparent 40%
+              )`,
             }}
-            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-            style={{ backgroundSize: "200% 200%" }}
           />
+        )}
 
-          {/* Folder icon */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              className="p-6 rounded-2xl bg-[#0a0a0f]/50 backdrop-blur-sm"
-            >
-              <Folder className="w-12 h-12 text-cyan-400" />
-            </motion.div>
-          </div>
+        {/* Project image area */}
+        <div className="relative h-48 md:h-64 bg-gradient-to-br from-cyan-500/10 via-teal-500/10 to-emerald-500/10 overflow-hidden">
+          {/* Show actual images if available */}
+          {hasImages ? (
+            <>
+              <img
+                src={project.images![currentImageIndex]}
+                alt={`${project.title} screenshot ${currentImageIndex + 1}`}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              {/* Image navigation dots */}
+              {project.images!.length > 1 && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                  {project.images!.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndex(idx);
+                      }}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        idx === currentImageIndex
+                          ? "bg-cyan-400 w-4"
+                          : "bg-white/50 hover:bg-white/80"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+              {/* Gradient overlay for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f]/60 to-transparent" />
+            </>
+          ) : (
+            <>
+              {/* Animated gradient overlay - simplified for mobile */}
+              {!isMobile && (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20"
+                  animate={{
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                  }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                  style={{ backgroundSize: "200% 200%" }}
+                />
+              )}
+
+              {/* Folder icon for projects without images */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <motion.div
+                  whileHover={isMobile ? undefined : { scale: 1.1, rotate: 5 }}
+                  className="p-6 rounded-2xl bg-[#0a0a0f]/50 backdrop-blur-sm"
+                >
+                  <Folder className="w-12 h-12 text-cyan-400" />
+                </motion.div>
+              </div>
+            </>
+          )}
 
           {/* Links overlay */}
           <motion.div
@@ -164,17 +237,19 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           </div>
         </div>
 
-        {/* Shimmer effect on hover */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          initial={{ x: "-100%" }}
-          whileHover={{ x: "100%" }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent)",
-          }}
-        />
+        {/* Shimmer effect on hover - skip on mobile for performance */}
+        {!isMobile && (
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            initial={{ x: "-100%" }}
+            whileHover={{ x: "100%" }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent)",
+            }}
+          />
+        )}
       </motion.div>
     </motion.div>
   );

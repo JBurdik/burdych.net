@@ -34,6 +34,31 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Safari mobile performance optimizations */
+@supports (-webkit-touch-callout: none) {
+    /* Reduce motion for better performance on iOS */
+    .reduce-motion-ios {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* GPU acceleration hints for animations */
+.gpu-accelerated {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+}
+
+/* Reduce blur on mobile for performance */
+@media (max-width: 768px) {
+    .blur-heavy {
+        filter: blur(40px) !important;
+    }
+}
+
 /* Fonts */
 .jetbrains-mono {
     font-family: "JetBrains Mono", monospace;

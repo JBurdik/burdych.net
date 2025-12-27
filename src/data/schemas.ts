@@ -5,6 +5,7 @@ export const projectSchema = z.object({
   title: z.string().min(1, "Název je povinný"),
   description: z.string().min(10, "Popis musí mít alespoň 10 znaků"),
   image: z.string().optional(),
+  images: z.array(z.string()).default([]),
   technologies: z.array(z.string()).min(1, "Vyberte alespoň jednu technologii"),
   liveUrl: z.string().url("Neplatná URL").optional().or(z.literal("")),
   githubUrl: z.string().url("Neplatná URL").optional().or(z.literal("")),

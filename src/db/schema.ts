@@ -34,6 +34,7 @@ export const projects = pgTable("projects", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   image: text("image").notNull(),
+  images: text("images").array().default([]),
   technologies: text("technologies").array().default([]),
   liveUrl: text("live_url"),
   githubUrl: text("github_url"),

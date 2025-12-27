@@ -5,62 +5,108 @@ import { MagneticButton, MagneticOutlineButton } from "./ui/MagneticButton";
 import { about } from "../data/portfolio";
 import { ChevronDown, Download } from "lucide-react";
 
-// Floating orbs background
+// Detect mobile/touch devices
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(
+        window.innerWidth < 768 ||
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0,
+      );
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
+// Floating orbs background - optimized for mobile
 function FloatingOrbs() {
+  const isMobile = useIsMobile();
+
+  // Simpler, less resource-intensive animations for mobile
+  const mobileTransition = {
+    duration: 30,
+    repeat: Infinity,
+    ease: "linear" as const,
+  };
+
+  const desktopTransition = {
+    duration: 20,
+    repeat: Infinity,
+    ease: "easeInOut" as const,
+  };
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Large cyan orb */}
+      {/* Large cyan orb - reduced blur on mobile */}
       <motion.div
-        className="absolute w-[500px] h-[500px] rounded-full bg-cyan-500/20 blur-[100px]"
-        animate={{
-          x: [0, 100, 0],
-          y: [0, -50, 0],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        style={{ top: "10%", left: "10%" }}
+        className={`absolute rounded-full bg-cyan-500/20 ${
+          isMobile
+            ? "w-[300px] h-[300px] blur-[60px]"
+            : "w-[500px] h-[500px] blur-[100px]"
+        }`}
+        animate={
+          isMobile
+            ? { opacity: [0.5, 0.7, 0.5] }
+            : { x: [0, 100, 0], y: [0, -50, 0] }
+        }
+        transition={isMobile ? mobileTransition : desktopTransition}
+        style={{ top: "10%", left: "10%", willChange: "transform, opacity" }}
       />
 
       {/* Medium teal orb */}
       <motion.div
-        className="absolute w-[400px] h-[400px] rounded-full bg-teal-500/20 blur-[80px]"
-        animate={{
-          x: [0, -80, 0],
-          y: [0, 80, 0],
-        }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        style={{ top: "30%", right: "15%" }}
+        className={`absolute rounded-full bg-teal-500/20 ${
+          isMobile
+            ? "w-[250px] h-[250px] blur-[50px]"
+            : "w-[400px] h-[400px] blur-[80px]"
+        }`}
+        animate={
+          isMobile
+            ? { opacity: [0.4, 0.6, 0.4] }
+            : { x: [0, -80, 0], y: [0, 80, 0] }
+        }
+        transition={
+          isMobile
+            ? { ...mobileTransition, delay: 2 }
+            : { duration: 15, repeat: Infinity, ease: "easeInOut" }
+        }
+        style={{ top: "30%", right: "15%", willChange: "transform, opacity" }}
       />
 
       {/* Small emerald orb */}
       <motion.div
-        className="absolute w-[300px] h-[300px] rounded-full bg-emerald-500/15 blur-[60px]"
-        animate={{
-          x: [0, 50, 0],
-          y: [0, 100, 0],
-        }}
-        transition={{
-          duration: 18,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        style={{ bottom: "20%", left: "30%" }}
+        className={`absolute rounded-full bg-emerald-500/15 ${
+          isMobile
+            ? "w-[200px] h-[200px] blur-[40px]"
+            : "w-[300px] h-[300px] blur-[60px]"
+        }`}
+        animate={
+          isMobile
+            ? { opacity: [0.3, 0.5, 0.3] }
+            : { x: [0, 50, 0], y: [0, 100, 0] }
+        }
+        transition={
+          isMobile
+            ? { ...mobileTransition, delay: 4 }
+            : { duration: 18, repeat: Infinity, ease: "easeInOut" }
+        }
+        style={{ bottom: "20%", left: "30%", willChange: "transform, opacity" }}
       />
     </div>
   );
 }
 
-// Animated particles
+// Animated particles - reduced count for mobile performance
 function Particles() {
+  const isMobile = useIsMobile();
+
   const [particles] = useState(() =>
-    Array.from({ length: 50 }, (_, i) => ({
+    Array.from({ length: isMobile ? 15 : 50 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
@@ -69,6 +115,11 @@ function Particles() {
       delay: Math.random() * 5,
     })),
   );
+
+  // Skip particles on mobile for better performance
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -81,6 +132,7 @@ function Particles() {
             top: `${particle.y}%`,
             width: particle.size,
             height: particle.size,
+            willChange: "transform, opacity",
           }}
           animate={{
             y: [0, -30, 0],
@@ -98,8 +150,9 @@ function Particles() {
   );
 }
 
-// Cursor glow effect
+// Cursor glow effect - disabled on mobile/touch devices
 function CursorGlow() {
+  const isMobile = useIsMobile();
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
 
@@ -108,6 +161,8 @@ function CursorGlow() {
   const cursorYSpring = useSpring(cursorY, springConfig);
 
   useEffect(() => {
+    if (isMobile) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
@@ -115,7 +170,12 @@ function CursorGlow() {
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [cursorX, cursorY]);
+  }, [cursorX, cursorY, isMobile]);
+
+  // Skip cursor glow on mobile - no mouse cursor anyway
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <motion.div
@@ -125,6 +185,7 @@ function CursorGlow() {
           "radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%)",
         x: useTransform(cursorXSpring, (x) => x - 200),
         y: useTransform(cursorYSpring, (y) => y - 200),
+        willChange: "transform",
       }}
     />
   );
