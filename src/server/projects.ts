@@ -9,6 +9,7 @@ const projectInput = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
   image: z.string().optional(),
+  images: z.array(z.string()).optional(),
   technologies: z.array(z.string()),
   liveUrl: z.string().nullable().optional().or(z.literal("")),
   githubUrl: z.string().nullable().optional().or(z.literal("")),
@@ -41,12 +42,14 @@ export const createProject = createServerFn({ method: "POST" })
     projectInput.parse(data),
   )
   .handler(async ({ data }) => {
+    const images = data.images || [];
     const [result] = await db
       .insert(projects)
       .values({
         title: data.title,
         description: data.description,
-        image: data.image || "/projects/placeholder.jpg",
+        image: data.image || images[0] || "/projects/placeholder.jpg",
+        images: images,
         technologies: data.technologies,
         liveUrl: data.liveUrl || null,
         githubUrl: data.githubUrl || null,
@@ -60,12 +63,14 @@ export const createProject = createServerFn({ method: "POST" })
 export const updateProject = createServerFn({ method: "POST" })
   .inputValidator((data: { id: string } & z.infer<typeof projectInput>) => data)
   .handler(async ({ data }) => {
+    const images = data.images || [];
     const [result] = await db
       .update(projects)
       .set({
         title: data.title,
         description: data.description,
-        image: data.image || "/projects/placeholder.jpg",
+        image: data.image || images[0] || "/projects/placeholder.jpg",
+        images: images,
         technologies: data.technologies,
         liveUrl: data.liveUrl || null,
         githubUrl: data.githubUrl || null,

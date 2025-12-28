@@ -16,6 +16,13 @@ import {
   updateProject,
   deleteProject,
 } from "../../server/projects";
+import { getPresignedViewUrls } from "../../server/upload";
+import { MINIO_PUBLIC_URL } from "../../lib/minio";
+
+// Check if URL is from MinIO and needs presigning
+function isMinioUrl(url: string): boolean {
+  return url.startsWith(MINIO_PUBLIC_URL) || url.includes("minio.burdych.net");
+}
 
 export const Route = createFileRoute("/admin/projects")({
   component: AdminProjects,
@@ -24,7 +31,33 @@ export const Route = createFileRoute("/admin/projects")({
   },
   loader: async () => {
     const projects = await getProjects();
-    return { projects };
+
+    // Collect all MinIO image URLs that need presigning
+    const minioUrls: string[] = [];
+    for (const project of projects) {
+      if (project.images) {
+        for (const url of project.images) {
+          if (isMinioUrl(url)) {
+            minioUrls.push(url);
+          }
+        }
+      }
+    }
+
+    // Get presigned URLs for all MinIO images
+    let urlMap: Record<string, string> = {};
+    if (minioUrls.length > 0) {
+      const { urls } = await getPresignedViewUrls({ data: minioUrls });
+      urlMap = Object.fromEntries(urls.map((u) => [u.original, u.presigned]));
+    }
+
+    // Replace MinIO URLs with presigned URLs in projects
+    const projectsWithPresignedUrls = projects.map((project) => ({
+      ...project,
+      images: project.images?.map((url) => urlMap[url] || url) || [],
+    }));
+
+    return { projects: projectsWithPresignedUrls };
   },
 });
 
@@ -244,6 +277,7 @@ function AdminProjects() {
                   title: selectedProject.title,
                   description: selectedProject.description,
                   image: selectedProject.image ?? undefined,
+                  images: selectedProject.images ?? [],
                   technologies: selectedProject.technologies ?? [],
                   liveUrl: selectedProject.liveUrl ?? undefined,
                   githubUrl: selectedProject.githubUrl ?? undefined,
