@@ -1,5 +1,29 @@
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, type MouseEvent, type ReactNode } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import {
+  useRef,
+  useState,
+  useEffect,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
+
+// Detect mobile/touch devices
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(
+        window.innerWidth < 768 ||
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0,
+      );
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
 
 interface MagneticButtonProps {
   children: ReactNode;
@@ -16,6 +40,7 @@ export function MagneticButton({
   onClick,
   href,
 }: MagneticButtonProps) {
+  const isMobile = useIsMobile();
   const ref = useRef<HTMLDivElement>(null);
 
   const x = useMotionValue(0);
@@ -26,7 +51,7 @@ export function MagneticButton({
   const ySpring = useSpring(y, springConfig);
 
   function handleMouseMove(e: MouseEvent) {
-    if (!ref.current) return;
+    if (isMobile || !ref.current) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     const centerX = left + width / 2;
     const centerY = top + height / 2;
@@ -51,23 +76,13 @@ export function MagneticButton({
       <Component
         href={href}
         onClick={onClick}
-        style={{ x: xSpring, y: ySpring }}
-        whileHover={{ scale: 1.05 }}
+        style={isMobile ? undefined : { x: xSpring, y: ySpring }}
+        whileHover={isMobile ? undefined : { scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className={`relative inline-flex items-center justify-center overflow-hidden rounded-full font-medium transition-all ${className}`}
       >
         {/* Gradient background */}
         <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500" />
-
-        {/* Animated gradient overlay */}
-        <motion.span
-          className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 opacity-0"
-          whileHover={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        />
-
-        {/* Glow effect */}
-        <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
 
         {/* Content */}
         <span className="relative z-10 px-8 py-3 text-white">{children}</span>
@@ -84,6 +99,7 @@ export function MagneticOutlineButton({
   onClick,
   href,
 }: MagneticButtonProps) {
+  const isMobile = useIsMobile();
   const ref = useRef<HTMLDivElement>(null);
 
   const x = useMotionValue(0);
@@ -94,7 +110,7 @@ export function MagneticOutlineButton({
   const ySpring = useSpring(y, springConfig);
 
   function handleMouseMove(e: MouseEvent) {
-    if (!ref.current) return;
+    if (isMobile || !ref.current) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     const centerX = left + width / 2;
     const centerY = top + height / 2;
@@ -119,8 +135,8 @@ export function MagneticOutlineButton({
       <Component
         href={href}
         onClick={onClick}
-        style={{ x: xSpring, y: ySpring }}
-        whileHover={{ scale: 1.05 }}
+        style={isMobile ? undefined : { x: xSpring, y: ySpring }}
+        whileHover={isMobile ? undefined : { scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className={`group relative inline-flex items-center justify-center overflow-hidden rounded-full font-medium ${className}`}
       >
@@ -128,13 +144,6 @@ export function MagneticOutlineButton({
         <span className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 p-[2px]">
           <span className="absolute inset-[2px] rounded-full bg-[#0a0a0f]" />
         </span>
-
-        {/* Hover fill */}
-        <motion.span
-          className="absolute inset-[2px] rounded-full bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20 opacity-0"
-          whileHover={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        />
 
         {/* Content */}
         <span className="relative z-10 px-8 py-3 flex items-center bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 bg-clip-text text-transparent [&>svg]:text-cyan-400">

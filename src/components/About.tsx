@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, type MouseEvent } from "react";
+import { useEffect, useState, useRef, type MouseEvent } from "react";
 import type { About as AboutType, Social } from "../db/schema";
 import { FadeUp, GradientText } from "./ui/AnimatedText";
 import { MagneticButton } from "./ui/MagneticButton";
@@ -17,6 +17,24 @@ import {
 // About with socials type (as returned by getAbout)
 export type AboutWithSocials = AboutType & { socials: Social[] };
 
+// Detect mobile/touch devices
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(
+        window.innerWidth < 768 ||
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0,
+      );
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   github: Github,
   linkedin: Linkedin,
@@ -27,6 +45,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 function SocialLink({ social, index }: { social: Social; index: number }) {
   const Icon = iconMap[social.icon];
   const ref = useRef<HTMLAnchorElement>(null);
+  const isMobile = useIsMobile();
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -36,7 +55,7 @@ function SocialLink({ social, index }: { social: Social; index: number }) {
   const ySpring = useSpring(y, springConfig);
 
   function handleMouseMove(e: MouseEvent) {
-    if (!ref.current) return;
+    if (isMobile || !ref.current) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     const centerX = left + width / 2;
     const centerY = top + height / 2;
@@ -55,13 +74,13 @@ function SocialLink({ social, index }: { social: Social; index: number }) {
       href={social.url}
       target="_blank"
       rel="noopener noreferrer"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={isMobile ? undefined : handleMouseMove}
+      onMouseLeave={isMobile ? undefined : handleMouseLeave}
       initial={{ opacity: 0, scale: 0 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1 + 0.5, type: "spring" }}
-      style={{ x: xSpring, y: ySpring }}
+      style={isMobile ? undefined : { x: xSpring, y: ySpring }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
       className="group relative p-4 rounded-2xl border border-white/10 bg-[#12121a]/80 backdrop-blur-sm hover:border-cyan-500/50 transition-colors"
@@ -83,6 +102,7 @@ function SocialLink({ social, index }: { social: Social; index: number }) {
 
 function AnimatedAvatar({ about }: { about: AboutWithSocials }) {
   const ref = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -97,7 +117,7 @@ function AnimatedAvatar({ about }: { about: AboutWithSocials }) {
   );
 
   function handleMouseMove(e: MouseEvent) {
-    if (!ref.current) return;
+    if (isMobile || !ref.current) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     mouseX.set((e.clientX - left) / width - 0.5);
     mouseY.set((e.clientY - top) / height - 0.5);
@@ -111,17 +131,21 @@ function AnimatedAvatar({ about }: { about: AboutWithSocials }) {
   return (
     <motion.div
       ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={isMobile ? undefined : handleMouseMove}
+      onMouseLeave={isMobile ? undefined : handleMouseLeave}
       initial={{ opacity: 0, scale: 0.8 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
       className="relative"
-      style={{ perspective: 1000 }}
+      style={{ perspective: isMobile ? undefined : 1000 }}
     >
       <motion.div
-        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        style={
+          isMobile
+            ? undefined
+            : { rotateX, rotateY, transformStyle: "preserve-3d" }
+        }
         className="relative"
       >
         {/* Gradient border */}

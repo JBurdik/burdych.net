@@ -1,4 +1,4 @@
-import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useRef, useState, useEffect, type MouseEvent } from "react";
 import type { Project } from "../db/schema";
 import {
@@ -27,11 +27,15 @@ function useIsMobile() {
   return isMobile;
 }
 
-function ProjectCard({ project, index }: { project: Project; index: number }) {
+function ProjectCard({ project }: { project: Project }) {
   const isMobile = useIsMobile();
   const ref = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+
+  // Create transforms for 3D effect - always create hooks, use conditionally
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], [5, -5]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], [-5, 5]);
 
   function handleMouseMove({ clientX, clientY }: MouseEvent) {
     if (isMobile || !ref.current) return;
@@ -47,13 +51,6 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
     mouseY.set(0);
   }
 
-  // Featured projects get larger grid area
-  const gridClass = project.featured
-    ? index === 0
-      ? "md:col-span-2 md:row-span-2"
-      : "md:col-span-2"
-    : "";
-
   // Check if project has images
   const hasImages = project.images && project.images.length > 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -63,7 +60,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`group relative ${gridClass}`}
+      className="group relative h-full"
       style={
         isMobile
           ? undefined
@@ -74,15 +71,8 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       }
     >
       <motion.div
-        className="relative h-full rounded-2xl border border-white/10 bg-[#12121a]/80 backdrop-blur-sm overflow-hidden"
-        style={
-          isMobile
-            ? undefined
-            : {
-                rotateX: useMotionTemplate`${mouseY.get() * -10}deg`,
-                rotateY: useMotionTemplate`${mouseX.get() * 10}deg`,
-              }
-        }
+        className="relative h-full rounded-2xl border border-white/10 bg-[#12121a]/80 backdrop-blur-sm overflow-hidden flex flex-col"
+        style={isMobile ? undefined : { rotateX, rotateY }}
         whileHover={
           isMobile
             ? { scale: 1.02 }
@@ -93,22 +83,8 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         }
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        {/* Gradient glow on hover - skip on mobile */}
-        {!isMobile && (
-          <motion.div
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-            style={{
-              background: `radial-gradient(
-                600px circle at ${mouseX.get() * 100 + 50}% ${mouseY.get() * 100 + 50}%,
-                rgba(6, 182, 212, 0.1),
-                transparent 40%
-              )`,
-            }}
-          />
-        )}
-
         {/* Project image area */}
-        <div className="relative h-48 md:h-64 bg-gradient-to-br from-cyan-500/10 via-teal-500/10 to-emerald-500/10 overflow-hidden">
+        <div className="relative h-48 md:h-56 bg-gradient-to-br from-cyan-500/10 via-teal-500/10 to-emerald-500/10 overflow-hidden flex-shrink-0">
           {/* Show actual images if available */}
           {hasImages ? (
             <>
@@ -141,86 +117,62 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             </>
           ) : (
             <>
-              {/* Animated gradient overlay - simplified for mobile */}
-              {!isMobile && (
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20"
-                  animate={{
-                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                  }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                  style={{ backgroundSize: "200% 200%" }}
-                />
-              )}
+              {/* Static gradient for mobile, animated for desktop */}
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20" />
 
               {/* Folder icon for projects without images */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  whileHover={isMobile ? undefined : { scale: 1.1, rotate: 5 }}
-                  className="p-6 rounded-2xl bg-[#0a0a0f]/50 backdrop-blur-sm"
-                >
+                <div className="p-6 rounded-2xl bg-[#0a0a0f]/50 backdrop-blur-sm">
                   <Folder className="w-12 h-12 text-cyan-400" />
-                </motion.div>
+                </div>
               </div>
             </>
           )}
 
           {/* Links overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
-            className="absolute inset-0 bg-[#0a0a0f]/80 flex items-center justify-center gap-4"
-          >
+          <div className="absolute inset-0 bg-[#0a0a0f]/80 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             {project.liveUrl && (
-              <motion.a
+              <a
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-3 rounded-full bg-white/10 hover:bg-cyan-500/20 transition-colors"
+                className="p-3 rounded-full bg-white/10 hover:bg-cyan-500/20 transition-colors hover:scale-110 active:scale-95"
               >
                 <ExternalLink className="w-6 h-6 text-cyan-400" />
-              </motion.a>
+              </a>
             )}
             {project.githubUrl && (
-              <motion.a
+              <a
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-3 rounded-full bg-white/10 hover:bg-emerald-500/20 transition-colors"
+                className="p-3 rounded-full bg-white/10 hover:bg-emerald-500/20 transition-colors hover:scale-110 active:scale-95"
               >
                 <Github className="w-6 h-6 text-emerald-400" />
-              </motion.a>
+              </a>
             )}
-          </motion.div>
+          </div>
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 flex flex-col flex-grow">
           {/* Featured badge */}
           {project.featured && (
-            <motion.span
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 text-cyan-400 border border-cyan-500/30 mb-3"
-            >
+            <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 text-cyan-400 border border-cyan-500/30 mb-3 w-fit">
               Hlavní
-            </motion.span>
+            </span>
           )}
 
           <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">
             {project.title}
           </h3>
 
-          <p className="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-3">
+          <p className="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-3 flex-grow">
             {project.description}
           </p>
 
           {/* Tech tags */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 mt-auto">
             {(project.technologies || []).slice(0, 4).map((tech) => (
               <span
                 key={tech}
@@ -236,20 +188,6 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             )}
           </div>
         </div>
-
-        {/* Shimmer effect on hover - skip on mobile for performance */}
-        {!isMobile && (
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            initial={{ x: "-100%" }}
-            whileHover={{ x: "100%" }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
-            style={{
-              background:
-                "linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent)",
-            }}
-          />
-        )}
       </motion.div>
     </motion.div>
   );
@@ -283,11 +221,11 @@ export function Projects({ projects }: ProjectsProps) {
           </p>
         </FadeUp>
 
-        {/* Bento grid */}
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {featuredProjects.map((project, index) => (
-            <StaggerItem key={project.id}>
-              <ProjectCard project={project} index={index} />
+        {/* Featured projects grid */}
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 auto-rows-fr">
+          {featuredProjects.map((project) => (
+            <StaggerItem key={project.id} className="h-full">
+              <ProjectCard project={project} />
             </StaggerItem>
           ))}
         </StaggerContainer>
@@ -298,13 +236,10 @@ export function Projects({ projects }: ProjectsProps) {
             <FadeUp className="text-center mb-8">
               <h3 className="text-2xl font-bold text-white">Další projekty</h3>
             </FadeUp>
-            <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {otherProjects.map((project, index) => (
-                <StaggerItem key={project.id}>
-                  <ProjectCard
-                    project={project}
-                    index={index + featuredProjects.length}
-                  />
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-fr">
+              {otherProjects.map((project) => (
+                <StaggerItem key={project.id} className="h-full">
+                  <ProjectCard project={project} />
                 </StaggerItem>
               ))}
             </StaggerContainer>

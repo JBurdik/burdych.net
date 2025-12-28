@@ -1,5 +1,29 @@
-import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
-import { useRef, type MouseEvent, type ReactNode } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import {
+  useRef,
+  useState,
+  useEffect,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
+
+// Detect mobile/touch devices
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(
+        window.innerWidth < 768 ||
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0,
+      );
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
 
 interface GlowCardProps {
   children: ReactNode;
@@ -7,60 +31,59 @@ interface GlowCardProps {
   glowColor?: string;
 }
 
-export function GlowCard({
-  children,
-  className = "",
-  glowColor = "rgba(6, 182, 212, 0.15)",
-}: GlowCardProps) {
+export function GlowCard({ children, className = "" }: GlowCardProps) {
+  const isMobile = useIsMobile();
   const ref = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
+  // Create background position transforms
+  const backgroundX = useTransform(mouseX, (x) => `${x}px`);
+  const backgroundY = useTransform(mouseY, (y) => `${y}px`);
+
   function handleMouseMove({ clientX, clientY }: MouseEvent) {
-    if (!ref.current) return;
+    if (isMobile || !ref.current) return;
     const { left, top } = ref.current.getBoundingClientRect();
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
+  }
+
+  // Skip glow effect on mobile
+  if (isMobile) {
+    return (
+      <motion.div
+        className={`group relative rounded-2xl border border-white/10 bg-[#12121a]/80 backdrop-blur-sm overflow-hidden ${className}`}
+        whileHover={{ y: -5 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
+        <div className="relative z-10">{children}</div>
+      </motion.div>
+    );
   }
 
   return (
     <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={`group relative rounded-2xl border border-white/10 bg-[#12121a]/80 backdrop-blur-sm overflow-hidden ${className}`}
       whileHover={{ y: -5 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      {/* Glow effect */}
-      <motion.div
-        className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{
-          background: useMotionTemplate`
-            radial-gradient(
-              400px circle at ${mouseX}px ${mouseY}px,
-              ${glowColor},
-              transparent 80%
-            )
-          `,
-        }}
-      />
-
-      {/* Border glow */}
-      <motion.div
-        className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{
-          background: useMotionTemplate`
-            radial-gradient(
-              200px circle at ${mouseX}px ${mouseY}px,
-              rgba(20, 184, 166, 0.4),
-              transparent 80%
-            )
-          `,
-          mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-          maskComposite: "exclude",
-          padding: "1px",
-        }}
-      />
+      {/* Glow effect - using CSS custom properties for position */}
+      {isHovered && (
+        <motion.div
+          className="pointer-events-none absolute -inset-px rounded-2xl opacity-100 transition-opacity duration-300"
+          style={{
+            background: `radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(6, 182, 212, 0.15), transparent 80%)`,
+            // @ts-ignore - CSS custom properties
+            "--mouse-x": backgroundX,
+            "--mouse-y": backgroundY,
+          }}
+        />
+      )}
 
       {/* Content */}
       <div className="relative z-10">{children}</div>

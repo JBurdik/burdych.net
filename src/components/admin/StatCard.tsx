@@ -1,5 +1,11 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 
 interface StatCardProps {
   title: string;
@@ -7,6 +13,24 @@ interface StatCardProps {
   icon: ReactNode;
   gradient?: string;
   suffix?: string;
+}
+
+// Detect mobile/touch devices
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(
+        window.innerWidth < 768 ||
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0,
+      );
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
 }
 
 // Animated counter hook
@@ -30,13 +54,18 @@ export function StatCard({
   suffix = "",
 }: StatCardProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const isMobile = useIsMobile();
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
 
   const animatedValue = useAnimatedCounter(value);
 
+  // Use useTransform to create reactive background position
+  const glowX = useTransform(mouseX, (v) => `${v * 100}%`);
+  const glowY = useTransform(mouseY, (v) => `${v * 100}%`);
+
   function handleMouseMove(e: MouseEvent) {
-    if (!ref.current) return;
+    if (isMobile || !ref.current) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     mouseX.set((e.clientX - left) / width);
     mouseY.set((e.clientY - top) / height);
@@ -50,25 +79,27 @@ export function StatCard({
   return (
     <motion.div
       ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={isMobile ? undefined : handleMouseMove}
+      onMouseLeave={isMobile ? undefined : handleMouseLeave}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.3 }}
       className="group relative rounded-2xl border border-white/10 bg-[#12121a]/80 backdrop-blur-sm p-6 overflow-hidden"
     >
-      {/* Glow effect following mouse */}
-      <motion.div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{
-          background: `radial-gradient(
-            300px circle at ${mouseX.get() * 100}% ${mouseY.get() * 100}%,
-            rgba(6, 182, 212, 0.15),
-            transparent 50%
-          )`,
-        }}
-      />
+      {/* Glow effect following mouse - disabled on mobile */}
+      {!isMobile && (
+        <motion.div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          style={{
+            background: useTransform(
+              [glowX, glowY],
+              ([x, y]) =>
+                `radial-gradient(300px circle at ${x} ${y}, rgba(6, 182, 212, 0.15), transparent 50%)`,
+            ),
+          }}
+        />
+      )}
 
       {/* Shimmer effect on hover */}
       <motion.div
