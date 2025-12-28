@@ -160,6 +160,10 @@ function CursorGlow() {
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
+  // Move useTransform hooks to top level - MUST be called unconditionally
+  const glowX = useTransform(cursorXSpring, (x) => x - 200);
+  const glowY = useTransform(cursorYSpring, (y) => y - 200);
+
   useEffect(() => {
     if (isMobile) return;
 
@@ -183,8 +187,8 @@ function CursorGlow() {
       style={{
         background:
           "radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%)",
-        x: useTransform(cursorXSpring, (x) => x - 200),
-        y: useTransform(cursorYSpring, (y) => y - 200),
+        x: glowX,
+        y: glowY,
         willChange: "transform",
       }}
     />

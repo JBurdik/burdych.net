@@ -64,6 +64,13 @@ export function StatCard({
   const glowX = useTransform(mouseX, (v) => `${v * 100}%`);
   const glowY = useTransform(mouseY, (v) => `${v * 100}%`);
 
+  // Create the radial gradient transform at top level (not inside JSX)
+  const glowBackground = useTransform(
+    [glowX, glowY],
+    ([x, y]) =>
+      `radial-gradient(300px circle at ${x} ${y}, rgba(6, 182, 212, 0.15), transparent 50%)`,
+  );
+
   function handleMouseMove(e: MouseEvent) {
     if (isMobile || !ref.current) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
@@ -92,11 +99,7 @@ export function StatCard({
         <motion.div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{
-            background: useTransform(
-              [glowX, glowY],
-              ([x, y]) =>
-                `radial-gradient(300px circle at ${x} ${y}, rgba(6, 182, 212, 0.15), transparent 50%)`,
-            ),
+            background: glowBackground,
           }}
         />
       )}
