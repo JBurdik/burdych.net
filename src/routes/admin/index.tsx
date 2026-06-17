@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { authMiddleware } from "../../lib/auth-middleware";
 import { motion } from "framer-motion";
 import {
   Folder,
@@ -10,7 +9,6 @@ import {
   ExternalLink,
   ArrowRight,
 } from "lucide-react";
-import { AdminLayout } from "../../components/admin/AdminLayout";
 import { StatCard } from "../../components/admin/StatCard";
 import { GlowCard } from "../../components/ui/GlowCard";
 import { FadeUp, GradientText } from "../../components/ui/AnimatedText";
@@ -20,9 +18,7 @@ import { getTechnologies } from "../../server/technologies";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
-  server: {
-    middleware: [authMiddleware],
-  },
+  staticData: { title: "Dashboard", subtitle: "Přehled" },
   loader: async () => {
     const [projects, experiences, technologies] = await Promise.all([
       getProjects(),
@@ -67,7 +63,7 @@ function AdminDashboard() {
   const recentExperiences = experiences.slice(0, 3);
 
   return (
-    <AdminLayout title="Dashboard" subtitle="Přehled">
+    <>
       {/* Stats Grid */}
       <FadeUp>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -217,6 +213,6 @@ function AdminDashboard() {
           </GlowCard>
         </FadeUp>
       </div>
-    </AdminLayout>
+    </>
   );
 }

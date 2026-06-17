@@ -1,9 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { authMiddleware } from "../../lib/auth-middleware";
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, Briefcase } from "lucide-react";
 import { useState } from "react";
-import { AdminLayout } from "../../components/admin/AdminLayout";
 import { DataTable } from "../../components/admin/DataTable";
 import { Modal, ConfirmModal } from "../../components/admin/Modal";
 import { ExperienceForm } from "../../components/admin/forms/ExperienceForm";
@@ -19,9 +17,7 @@ import {
 
 export const Route = createFileRoute("/admin/experiences")({
   component: AdminExperiences,
-  server: {
-    middleware: [authMiddleware],
-  },
+  staticData: { title: "Zkušenosti", subtitle: "Pracovní zkušenosti" },
   loader: async () => {
     const experiences = await getExperiences();
     return { experiences };
@@ -168,7 +164,7 @@ function AdminExperiences() {
   );
 
   return (
-    <AdminLayout title="Zkušenosti" subtitle="Pracovní zkušenosti">
+    <>
       <FadeUp>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -244,6 +240,6 @@ function AdminExperiences() {
         confirmText="Smazat"
         variant="danger"
       />
-    </AdminLayout>
+    </>
   );
 }

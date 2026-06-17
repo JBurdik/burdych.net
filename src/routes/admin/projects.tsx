@@ -1,9 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { authMiddleware } from "../../lib/auth-middleware";
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, Star, ExternalLink, Github } from "lucide-react";
 import { useState } from "react";
-import { AdminLayout } from "../../components/admin/AdminLayout";
 import { DataTable } from "../../components/admin/DataTable";
 import { Modal, ConfirmModal } from "../../components/admin/Modal";
 import { ProjectForm } from "../../components/admin/forms/ProjectForm";
@@ -26,9 +24,7 @@ function isMinioUrl(url: string): boolean {
 
 export const Route = createFileRoute("/admin/projects")({
   component: AdminProjects,
-  server: {
-    middleware: [authMiddleware],
-  },
+  staticData: { title: "Projekty", subtitle: "Správa projektů" },
   loader: async () => {
     const projects = await getProjects();
 
@@ -230,7 +226,7 @@ function AdminProjects() {
   );
 
   return (
-    <AdminLayout title="Projekty" subtitle="Správa projektů">
+    <>
       <FadeUp>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -306,6 +302,6 @@ function AdminProjects() {
         confirmText="Smazat"
         variant="danger"
       />
-    </AdminLayout>
+    </>
   );
 }

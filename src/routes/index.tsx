@@ -1,17 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Hero } from "../components/Hero";
-import { Experience } from "../components/Experience";
-import { Projects } from "../components/Projects";
-import { Technologies } from "../components/Technologies";
-import { About } from "../components/About";
-import { Footer } from "../components/Footer";
-import { ScrollProgress } from "../components/ui/ScrollProgress";
-import { SmoothScroll } from "../components/SmoothScroll";
+import { Desktop } from "../components/os/Desktop";
 import { getProjects } from "../server/projects";
 import { getExperiences } from "../server/experiences";
 import { getTechnologies } from "../server/technologies";
 import { getAbout } from "../server/about";
+import { getMiniApps } from "../server/mini-apps";
+import { getAppLinks } from "../server/app-links";
+import { getIconLayout } from "../server/desktop-icons";
 import { getPresignedViewUrls } from "../server/upload";
+import { fetchSession } from "../lib/auth-middleware";
 import { MINIO_PUBLIC_URL } from "../lib/minio";
 
 // Check if URL is from MinIO and needs presigning
@@ -22,11 +19,15 @@ function isMinioUrl(url: string): boolean {
 export const Route = createFileRoute("/")({
   component: App,
   loader: async () => {
-    const [projects, experiences, technologies, about] = await Promise.all([
+    const [projects, experiences, technologies, about, miniApps, appLinks, iconLayout, session] = await Promise.all([
       getProjects(),
       getExperiences(),
       getTechnologies(),
       getAbout(),
+      getMiniApps(),
+      getAppLinks(),
+      getIconLayout(),
+      fetchSession(),
     ]);
 
     // Collect all MinIO image URLs that need presigning
@@ -59,30 +60,31 @@ export const Route = createFileRoute("/")({
       experiences,
       technologies,
       about,
+      miniApps,
+      appLinks,
+      iconLayout,
+      isAdmin: !!session,
     };
   },
 });
 
 function App() {
-  const { projects, experiences, technologies, about } = Route.useLoaderData();
+  const { projects, experiences, technologies, about, miniApps, appLinks, iconLayout, isAdmin } =
+    Route.useLoaderData();
 
   return (
-    <SmoothScroll>
-      <main className="relative">
-        {/* Scroll progress indicator */}
-        <ScrollProgress />
-
-        {/* Noise overlay for texture */}
-        <div className="noise-overlay" />
-
-        {/* Sections */}
-        <Hero />
-        <Experience experiences={experiences} />
-        <Projects projects={projects} />
-        <Technologies technologies={technologies} />
-        {about && <About about={about} />}
-        <Footer />
-      </main>
-    </SmoothScroll>
+    <>
+      <div className="noise-overlay" />
+      <Desktop
+        projects={projects}
+        experiences={experiences}
+        technologies={technologies}
+        about={about}
+        miniApps={miniApps}
+        appLinks={appLinks}
+        iconLayout={iconLayout}
+        isAdmin={isAdmin}
+      />
+    </>
   );
 }

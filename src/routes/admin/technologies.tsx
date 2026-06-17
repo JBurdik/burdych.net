@@ -1,9 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { authMiddleware } from "../../lib/auth-middleware";
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, Code2 } from "lucide-react";
 import { useState } from "react";
-import { AdminLayout } from "../../components/admin/AdminLayout";
 import { Modal, ConfirmModal } from "../../components/admin/Modal";
 import { TechnologyForm } from "../../components/admin/forms/TechnologyForm";
 import {
@@ -22,9 +20,7 @@ import {
 
 export const Route = createFileRoute("/admin/technologies")({
   component: AdminTechnologies,
-  server: {
-    middleware: [authMiddleware],
-  },
+  staticData: { title: "Technologie", subtitle: "Správa technologií" },
   loader: async () => {
     const technologies = await getTechnologies();
     return { technologies };
@@ -177,7 +173,7 @@ function AdminTechnologies() {
   };
 
   return (
-    <AdminLayout title="Technologie" subtitle="Správa technologií">
+    <>
       <FadeUp>
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
@@ -292,6 +288,6 @@ function AdminTechnologies() {
         confirmText="Smazat"
         variant="danger"
       />
-    </AdminLayout>
+    </>
   );
 }

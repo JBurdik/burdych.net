@@ -3,4 +3,5 @@ export * from "./projects";
 export * from "./experiences";
 export * from "./technologies";
 export * from "./about";
+export * from "./desktop-icons";
 export * from "./upload";

@@ -76,6 +76,44 @@ export const socials = pgTable("socials", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const miniApps = pgTable("mini_apps", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  title: text("title").notNull(),
+  iconName: text("icon_name").notNull().default("FileCode"),
+  accent: text("accent").notNull().default("from-indigo-500 to-purple-500"),
+  iconUrl: text("icon_url"),
+  s3Key: text("s3_key").notNull(),
+  onDesktop: boolean("on_desktop").default(true),
+  inDock: boolean("in_dock").default(false),
+  order: integer("order").default(0),
+  published: boolean("published").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const appLinks = pgTable("app_links", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  title: text("title").notNull(),
+  url: text("url").notNull(),
+  iconName: text("icon_name").notNull().default("Globe"),
+  iconUrl: text("icon_url"),
+  accent: text("accent").notNull().default("from-cyan-500 to-blue-500"),
+  onDesktop: boolean("on_desktop").default(true),
+  inDock: boolean("in_dock").default(false),
+  order: integer("order").default(0),
+  published: boolean("published").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Persisted desktop icon grid positions (set by admin, visible to all).
+export const desktopIcons = pgTable("desktop_icons", {
+  appId: text("app_id").primaryKey(),
+  col: integer("col").notNull(),
+  row: integer("row").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Auth tables (better-auth)
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -142,3 +180,12 @@ export type NewAbout = typeof about.$inferInsert;
 
 export type Social = typeof socials.$inferSelect;
 export type NewSocial = typeof socials.$inferInsert;
+
+export type MiniApp = typeof miniApps.$inferSelect;
+export type NewMiniApp = typeof miniApps.$inferInsert;
+
+export type AppLink = typeof appLinks.$inferSelect;
+export type NewAppLink = typeof appLinks.$inferInsert;
+
+export type DesktopIcon = typeof desktopIcons.$inferSelect;
+export type NewDesktopIcon = typeof desktopIcons.$inferInsert;

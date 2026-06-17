@@ -10,12 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminTechnologiesRouteImport } from './routes/admin/technologies'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminProjectsRouteImport } from './routes/admin/projects'
+import { Route as AdminMiniAppsRouteImport } from './routes/admin/mini-apps'
 import { Route as AdminExperiencesRouteImport } from './routes/admin/experiences'
+import { Route as AdminAppLinksRouteImport } from './routes/admin/app-links'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
@@ -30,35 +33,50 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminTechnologiesRoute = AdminTechnologiesRouteImport.update({
-  id: '/admin/technologies',
-  path: '/admin/technologies',
-  getParentRoute: () => rootRouteImport,
+  id: '/technologies',
+  path: '/technologies',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
-  id: '/admin/settings',
-  path: '/admin/settings',
-  getParentRoute: () => rootRouteImport,
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminProjectsRoute = AdminProjectsRouteImport.update({
-  id: '/admin/projects',
-  path: '/admin/projects',
-  getParentRoute: () => rootRouteImport,
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminMiniAppsRoute = AdminMiniAppsRouteImport.update({
+  id: '/mini-apps',
+  path: '/mini-apps',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminExperiencesRoute = AdminExperiencesRouteImport.update({
-  id: '/admin/experiences',
-  path: '/admin/experiences',
-  getParentRoute: () => rootRouteImport,
+  id: '/experiences',
+  path: '/experiences',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAppLinksRoute = AdminAppLinksRouteImport.update({
+  id: '/app-links',
+  path: '/app-links',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
@@ -103,12 +121,15 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/admin/app-links': typeof AdminAppLinksRoute
   '/admin/experiences': typeof AdminExperiencesRoute
+  '/admin/mini-apps': typeof AdminMiniAppsRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/technologies': typeof AdminTechnologiesRoute
-  '/admin': typeof AdminIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -121,7 +142,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/admin/app-links': typeof AdminAppLinksRoute
   '/admin/experiences': typeof AdminExperiencesRoute
+  '/admin/mini-apps': typeof AdminMiniAppsRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/technologies': typeof AdminTechnologiesRoute
@@ -138,8 +161,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/admin/app-links': typeof AdminAppLinksRoute
   '/admin/experiences': typeof AdminExperiencesRoute
+  '/admin/mini-apps': typeof AdminMiniAppsRoute
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/technologies': typeof AdminTechnologiesRoute
@@ -157,12 +183,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/login'
+    | '/admin/app-links'
     | '/admin/experiences'
+    | '/admin/mini-apps'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/technologies'
-    | '/admin'
+    | '/admin/'
     | '/api/auth/$'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -175,7 +204,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/admin/app-links'
     | '/admin/experiences'
+    | '/admin/mini-apps'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/technologies'
@@ -191,8 +222,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/login'
+    | '/admin/app-links'
     | '/admin/experiences'
+    | '/admin/mini-apps'
     | '/admin/projects'
     | '/admin/settings'
     | '/admin/technologies'
@@ -209,12 +243,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
-  AdminExperiencesRoute: typeof AdminExperiencesRoute
-  AdminProjectsRoute: typeof AdminProjectsRoute
-  AdminSettingsRoute: typeof AdminSettingsRoute
-  AdminTechnologiesRoute: typeof AdminTechnologiesRoute
-  AdminIndexRoute: typeof AdminIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
@@ -234,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -243,38 +280,52 @@ declare module '@tanstack/react-router' {
     }
     '/admin/': {
       id: '/admin/'
-      path: '/admin'
-      fullPath: '/admin'
+      path: '/'
+      fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/admin/technologies': {
       id: '/admin/technologies'
-      path: '/admin/technologies'
+      path: '/technologies'
       fullPath: '/admin/technologies'
       preLoaderRoute: typeof AdminTechnologiesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/admin/settings': {
       id: '/admin/settings'
-      path: '/admin/settings'
+      path: '/settings'
       fullPath: '/admin/settings'
       preLoaderRoute: typeof AdminSettingsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/admin/projects': {
       id: '/admin/projects'
-      path: '/admin/projects'
+      path: '/projects'
       fullPath: '/admin/projects'
       preLoaderRoute: typeof AdminProjectsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/mini-apps': {
+      id: '/admin/mini-apps'
+      path: '/mini-apps'
+      fullPath: '/admin/mini-apps'
+      preLoaderRoute: typeof AdminMiniAppsRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/admin/experiences': {
       id: '/admin/experiences'
-      path: '/admin/experiences'
+      path: '/experiences'
       fullPath: '/admin/experiences'
       preLoaderRoute: typeof AdminExperiencesRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/app-links': {
+      id: '/admin/app-links'
+      path: '/app-links'
+      fullPath: '/admin/app-links'
+      preLoaderRoute: typeof AdminAppLinksRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/demo/start/server-funcs': {
       id: '/demo/start/server-funcs'
@@ -335,14 +386,34 @@ declare module '@tanstack/react-router' {
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  LoginRoute: LoginRoute,
+interface AdminRouteRouteChildren {
+  AdminAppLinksRoute: typeof AdminAppLinksRoute
+  AdminExperiencesRoute: typeof AdminExperiencesRoute
+  AdminMiniAppsRoute: typeof AdminMiniAppsRoute
+  AdminProjectsRoute: typeof AdminProjectsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTechnologiesRoute: typeof AdminTechnologiesRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAppLinksRoute: AdminAppLinksRoute,
   AdminExperiencesRoute: AdminExperiencesRoute,
+  AdminMiniAppsRoute: AdminMiniAppsRoute,
   AdminProjectsRoute: AdminProjectsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTechnologiesRoute: AdminTechnologiesRoute,
   AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
+  LoginRoute: LoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,

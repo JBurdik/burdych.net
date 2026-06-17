@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Folder,
@@ -10,9 +10,10 @@ import {
   Menu,
   X,
   LogOut,
+  AppWindow,
+  Link as LinkIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { GradientText } from "../ui/AnimatedText";
 import { signOut } from "../../lib/auth-client";
 
 const navItems = [
@@ -20,6 +21,8 @@ const navItems = [
   { href: "/admin/projects", label: "Projekty", icon: Folder },
   { href: "/admin/experiences", label: "Zkušenosti", icon: Briefcase },
   { href: "/admin/technologies", label: "Technologie", icon: Code2 },
+  { href: "/admin/mini-apps", label: "Mini Apps", icon: AppWindow },
+  { href: "/admin/app-links", label: "App Linky", icon: LinkIcon },
   { href: "/admin/settings", label: "Nastavení", icon: Settings },
 ];
 
@@ -28,47 +31,49 @@ function NavItem({
   label,
   icon: Icon,
   isActive,
+  onClick,
 }: {
   href: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   isActive: boolean;
+  onClick?: () => void;
 }) {
   return (
-    <div className="relative">
-      <Link
-        to={href}
-        className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
-          isActive
-            ? "bg-gradient-to-r from-cyan-500/20 to-teal-500/20 text-white"
-            : "text-gray-400 hover:text-white hover:bg-white/5"
+    <Link
+      to={href}
+      onClick={onClick}
+      className={`group relative flex items-center gap-3 rounded-xl px-4 py-2.5 transition-colors duration-200 ${
+        isActive
+          ? "text-white"
+          : "text-gray-400 hover:bg-white/5 hover:text-white"
+      }`}
+    >
+      {isActive && (
+        <motion.div
+          layoutId="adminNavActive"
+          className="absolute inset-0 -z-10 rounded-xl border border-cyan-400/30 bg-gradient-to-r from-cyan-500/20 to-emerald-500/15"
+          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+        />
+      )}
+      {isActive && (
+        <motion.div
+          layoutId="adminNavBar"
+          className="absolute left-0 top-1/2 h-7 w-1 -translate-y-1/2 rounded-r-full bg-gradient-to-b from-cyan-400 to-emerald-500"
+          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+        />
+      )}
+      <Icon
+        className={`h-5 w-5 shrink-0 transition-colors ${
+          isActive ? "text-cyan-300" : "group-hover:text-cyan-300"
         }`}
-      >
-        {/* Active indicator */}
-        {isActive && (
-          <motion.div
-            layoutId="activeIndicator"
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-gradient-to-b from-cyan-500 to-emerald-500"
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-        )}
-
-        <div className="group-hover:scale-110 transition-transform">
-          <Icon
-            className={`w-5 h-5 ${isActive ? "text-cyan-400" : "group-hover:text-cyan-400"} transition-colors`}
-          />
-        </div>
-
-        <span className="font-medium">{label}</span>
-
-        {/* Hover glow */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyan-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
-      </Link>
-    </div>
+      />
+      <span className="text-sm font-medium">{label}</span>
+    </Link>
   );
 }
 
-export function AdminSidebar() {
+export function AdminSidebar({ email }: { email?: string }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -78,79 +83,97 @@ export function AdminSidebar() {
     navigate({ to: "/login" });
   };
 
-  const isActive = (href: string) => {
-    if (href === "/admin") {
-      return location.pathname === "/admin";
-    }
-    return location.pathname.startsWith(href);
-  };
+  const isActive = (href: string) =>
+    href === "/admin"
+      ? location.pathname === "/admin"
+      : location.pathname.startsWith(href);
+
+  const initials = (email ?? "A").slice(0, 2).toUpperCase();
 
   return (
     <>
-      {/* Mobile menu button */}
+      {/* Mobile toggle */}
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50 md:hidden p-3 rounded-xl bg-[#12121a] border border-white/10 text-white"
+        onClick={() => setIsOpen((v) => !v)}
+        className="fixed left-4 top-4 z-50 rounded-xl border border-white/10 bg-[#12121a]/80 p-2.5 text-white backdrop-blur-xl md:hidden"
+        aria-label="Menu"
       >
-        {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </motion.button>
 
-      {/* Mobile backdrop */}
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setIsOpen(false)}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
-        />
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
+          />
+        )}
+      </AnimatePresence>
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:relative top-0 left-0 z-40 w-64 h-screen bg-[#0a0a0f] border-r border-white/10 flex flex-col transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        className={`fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-white/10 bg-[#0b0b12]/80 backdrop-blur-2xl transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Logo */}
-        <div className="p-6 border-b border-white/10">
+        {/* Brand */}
+        <div className="border-b border-white/10 p-5">
           <Link to="/admin" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center">
-              <LayoutDashboard className="w-5 h-5 text-white" />
-            </div>
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-cyan-400 to-emerald-500 text-sm font-black text-black shadow-lg shadow-cyan-500/20">
+              JB
+            </span>
             <div>
-              <h1 className="font-bold text-white">Admin</h1>
-              <p className="text-xs text-gray-500">
-                <GradientText>Panel</GradientText>
+              <p className="font-semibold leading-tight text-white">
+                burdych<span className="text-cyan-400">OS</span>
               </p>
+              <p className="text-xs text-gray-500">Administrace</p>
             </div>
           </Link>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        {/* Nav */}
+        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           {navItems.map((item) => (
-            <NavItem key={item.href} {...item} isActive={isActive(item.href)} />
+            <NavItem
+              key={item.href}
+              {...item}
+              isActive={isActive(item.href)}
+              onClick={() => setIsOpen(false)}
+            />
           ))}
         </nav>
 
-        {/* Footer actions */}
-        <div className="p-4 border-t border-white/10 space-y-1">
+        {/* User + actions */}
+        <div className="space-y-1 border-t border-white/10 p-3">
+          <div className="mb-2 flex items-center gap-3 rounded-xl bg-white/5 px-3 py-2.5">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-cyan-500/30 to-emerald-500/30 text-xs font-bold text-cyan-200">
+              {initials}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-white">
+                {email ?? "Admin"}
+              </p>
+              <p className="text-xs text-emerald-400">● Online</p>
+            </div>
+          </div>
           <Link
             to="/"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group"
+            className="group flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-400 transition hover:bg-white/5 hover:text-white"
           >
-            <ArrowLeft className="w-5 h-5 group-hover:text-cyan-400 group-hover:-translate-x-1 transition-all" />
-            <span className="font-medium">Zpět na web</span>
+            <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1 group-hover:text-cyan-300" />
+            Zpět na web
           </Link>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all group"
+            className="group flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-400 transition hover:bg-red-500/10 hover:text-red-400"
           >
-            <LogOut className="w-5 h-5 group-hover:translate-x-1 transition-all" />
-            <span className="font-medium">Odhlásit se</span>
+            <LogOut className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            Odhlásit se
           </button>
         </div>
       </aside>

@@ -14,6 +14,9 @@ import {
   MAX_FILE_SIZE,
 } from "../lib/minio";
 
+export const ALLOWED_HTML_TYPES = ["text/html", "application/zip"];
+export const MAX_HTML_SIZE = 5 * 1024 * 1024;
+
 const presignedUrlInput = z.object({
   filename: z.string().min(1),
   contentType: z.string().refine((type) => ALLOWED_IMAGE_TYPES.includes(type), {
@@ -135,4 +138,38 @@ export const getPresignedViewUrls = createServerFn({ method: "POST" })
     );
 
     return { urls: presignedUrls };
+  });
+
+const presignedHtmlInput = z.object({
+  filename: z.string().min(1),
+  contentType: z.string().refine((t) => ALLOWED_HTML_TYPES.includes(t), {
+    message: "Invalid type. Allowed: text/html, application/zip",
+  }),
+  fileSize: z.number().max(MAX_HTML_SIZE, {
+    message: `File must be under ${MAX_HTML_SIZE / 1024 / 1024}MB`,
+  }),
+});
+
+export const getPresignedHtmlUploadUrl = createServerFn({ method: "POST" })
+  .inputValidator((data: z.infer<typeof presignedHtmlInput>) =>
+    presignedHtmlInput.parse(data),
+  )
+  .handler(async ({ data }) => {
+    const { filename, contentType } = data;
+    const ext = filename.split(".").pop() || "html";
+    const id = crypto.randomUUID();
+    const objectName = `mini-apps/${id}.${ext}`;
+    const s3Client = getS3Client();
+
+    const command = new PutObjectCommand({
+      Bucket: MINIO_BUCKET,
+      Key: objectName,
+      ContentType: contentType,
+    });
+
+    const presignedUrl = await getSignedUrl(s3Client, command, {
+      expiresIn: 10 * 60,
+    });
+
+    return { presignedUrl, objectName };
   });

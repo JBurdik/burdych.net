@@ -1,0 +1,18 @@
+{
+  "identities": [
+    {
+      "name": "portfolio",
+      "credentials": [
+        {
+          "accessKey": "CHANGE_ME",
+          "secretKey": "CHANGE_ME"
+        }
+      ],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    },
+    {
+      "name": "anonymous",
+      "actions": ["Read"]
+    }
+  ]
+}

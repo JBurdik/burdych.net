@@ -11,3 +11,6 @@ count.txt
 .output
 .vinxi
 todos.json
+
+# SeaweedFS S3 credentials
+seaweedfs/s3.json

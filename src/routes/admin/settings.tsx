@@ -14,12 +14,10 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-import { AdminLayout } from "../../components/admin/AdminLayout";
 import { ConfirmModal, Modal } from "../../components/admin/Modal";
 import { AboutForm } from "../../components/admin/forms/AboutForm";
 import type { AboutFormData } from "../../data/schemas";
 import type { Social } from "../../db/schema";
-import { authMiddleware } from "../../lib/auth-middleware";
 import {
   addSocial,
   deleteSocial,
@@ -29,9 +27,7 @@ import {
 
 export const Route = createFileRoute("/admin/settings")({
   component: SettingsPage,
-  server: {
-    middleware: [authMiddleware],
-  },
+  staticData: { title: "Nastavení", subtitle: "Profil a kontakt" },
   loader: async () => {
     const about = await getAbout();
     return { about };
@@ -56,11 +52,11 @@ function SettingsPage() {
 
   if (!aboutData) {
     return (
-      <AdminLayout>
+      <>
         <div className="text-center py-12 text-gray-500">
           Žádné údaje k zobrazení. Vytvořte profil v databázi.
         </div>
-      </AdminLayout>
+      </>
     );
   }
 
@@ -98,7 +94,7 @@ function SettingsPage() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <div className="space-y-8">
         {/* Header */}
         <motion.div
@@ -319,7 +315,16 @@ function SettingsPage() {
         size="lg"
       >
         <AboutForm
-          defaultValues={aboutData || undefined}
+          defaultValues={{
+            name: aboutData.name,
+            title: aboutData.title,
+            bio: aboutData.bio,
+            location: aboutData.location,
+            email: aboutData.email,
+            avatar: aboutData.avatar ?? undefined,
+            phone: aboutData.phone ?? undefined,
+            cvUrl: aboutData.cvUrl ?? undefined,
+          }}
           onSubmit={handleSaveProfile}
           onCancel={() => setIsEditingProfile(false)}
         />
@@ -416,6 +421,6 @@ function SettingsPage() {
         confirmText="Smazat"
         variant="danger"
       />
-    </AdminLayout>
+    </>
   );
 }

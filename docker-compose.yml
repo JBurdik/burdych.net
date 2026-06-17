@@ -17,5 +17,27 @@ services:
       timeout: 5s
       retries: 5
 
+  # SeaweedFS — Apache 2.0, lightweight S3-compatible storage
+  seaweedfs:
+    image: chrislusf/seaweedfs:latest
+    container_name: portfolio-s3
+    restart: unless-stopped
+    command: server -dir=/data -s3 -s3.config=/etc/seaweedfs/s3.json -s3.port=8333
+    ports:
+      - "9000:8333" # S3 API — only port app needs
+      # Filer (8888) + master (9333) are UNAUTHENTICATED — never publish.
+      # Bind to localhost only if you need local debugging:
+      # - "127.0.0.1:8888:8888"
+      # - "127.0.0.1:9333:9333"
+    volumes:
+      - seaweedfs_data:/data
+      - ./seaweedfs/s3.json:/etc/seaweedfs/s3.json:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8333"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
+  seaweedfs_data:
